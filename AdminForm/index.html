@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mitr">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+    integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+  <!-- Font Awesome CSS -->
+  <script src="https://kit.fontawesome.com/6a972cf3a7.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <style>
+    body {
+      font-family: "Mitr"
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-auto mx-auto">
+
+        <nav class="navbar navbar-expand-sm navbar-dark bg-danger flex-sm-nowrap flex-wrap">
+          <div class="container-fluid">
+            <button class="navbar-toggler flex-grow-sm-1 flex-grow-0 me-2" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#navbar5">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+            <span class="navbar-brand flex-grow-1"><i class="far fa-address-card"></i>
+                            ฟอร์มบันทึกข้อมูล</span>
+            <div class="navbar-collapse collapse flex-grow-1 justify-content-center" id="navbar5">
+              <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                  <i class="fas fa-home mr-2"></i>กลับหน้าหลัก</a>
+                </li>
+              </ul>
+            </div>
+            <div class="flex-grow-1">
+              <!--spacer-->
+            </div>
+          </div>
+        </nav>
+
+        <div class="card">
+          <div class="card-header bg-info text-light">
+            กรุณากรอกแบบฟอร์มสำหรับแจ้งปัญหาหรือแจ้งซ่อมบำรุงอุปกรณ์ต่างๆในภาควิชาวิทยาการคอมพิวเตอร์
+          </div>
+          <div class="card-body">
+
+            <form class="main" id="form" novalidate="novalidate" style="max-width: 600px;margin: 20px auto;">
+              <div id="forminner">
+                <div class="form-row">
+                  <div class="form-group col-md-auto">
+                    <label for="id">ผู้แจ้ง</label>
+                    <input type="text area" class="form-control" id="displayName" name="displayName"
+                                            value="<?= displayName ?>" readonly placeholder="ผู้แจ้ง...">
+                  </div>
+                  <div class="form-group col-md-auto">
+                    <label for="stdCode">สถานที่เกิดปัญหา</label>
+                    <input type="text area" class="form-control" id="location" name="location"
+                                            placeholder="สถานที่แจ้งของเสีย...">
+                  </div>
+                  <div class="form-group col-md-auto">
+                    <label for="email">เรื่องที่แจ้ง</label>
+                    <input type="text" class="form-control" id="request" name="request"
+                                            placeholder="เรื่องที่แจ้ง">
+                  </div>
+
+                  <!--อัปโหลดรูภาพ-->
+                  <div class="row">
+                    <div class="form-group col-md-auto">
+                      <span>เลือกรูปภาพ</span>
+                      <div class="btn">
+
+                        <input id="files" type="file">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row justify-content-center">
+                    <div class="input-field col s6 text-center">
+                      <button type="submit" class="btn btn-danger mb-2" id="button"
+                                                onclick="submitForm(); return false;">
+                                                บันทึกข้อมูล
+                                            </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </form>
+
+            <div>
+              <div id="success" style="display:none">
+                <h4 class="left-align teal-text">
+                  <center>
+                    บันทึกข้อมูลเรียบร้อย!
+                  </center>
+                </h4>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems);
+        });
+        var file, reader = new FileReader();
+        reader.onloadend = function (e) {
+            if (e.target.error != null) {
+                showError("File " + file.name + " could not be read.");
+                return;
+            } else {
+                let userId = '<?= userId ?>';
+                let displayName = '<?= displayName ?>';
+                let pictureUrl = '<?= pictureUrl ?>';
+                google.script.run
+                  .withSuccessHandler(function (result) {
+                    if (result === "OK") {
+                      // เรียกใช้ insertMongo ที่นี่
+                      showSuccess(result);
+                    } else {
+                      showError(result);
+                    }
+                  })
+                  .uploadFile(e.target.result, file.name, userId, displayName, pictureUrl, $('input#request').val(), $('input#location').val());
+            }
+        };
+        function showSuccess(e) {
+            if (e === "OK") {
+                $('#forminner').hide();
+                $('#success').show();
+                $('#image').hide();
+
+            } else {
+                showError(e);
+            }
+        }
+        function restartForm() {
+            $('#form').trigger("reset");
+            $('#forminner').show();
+            $('#success').hide();
+            $('#button').show();
+        }
+
+        function submitForm() {
+            var files = $('#files')[0].files;
+            if (files.length === 0) {
+                showError("กรุณาเลือกไฟล์ภาพ");
+                return;
+            }
+            
+            document.getElementById("button").style.display = "none"
+            file = files[0];
+            if (file.size > 1024 * 1024 * 20) {
+                showError("The file size should be < 20 MB. ");
+                return;
+            }
+            showMessage("...ระบบกำลังบันทึกข้อมูล...");
+            reader.readAsDataURL(file);
+        }
+        function showError(e) {
+            Swal.fire({
+                title: 'คุณกรอกข้อมูลยังไม่ครบ!',
+                text: e,
+                icon: 'error',
+                confirmButtonText: 'ตกลง'
+            })
+        }
+        function showMessage(e) {
+            Swal.fire({
+                title: '...กรุณารอสักครู...',
+                text: '...ระบบกำลังบันทึกข้อมูล...',
+                showConfirmButton: false,
+                timer: 3000
+            })
+        }
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+        document.getElementById("files").onchange = function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("image").src = e.target.result;
+                $('#image').show();
+            };
+            reader.readAsDataURL(this.files[0]);
+        };
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</body>
+
+</html>
