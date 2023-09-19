@@ -1,88 +1,36 @@
-// MongoDB connection
 const Endpoint = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
 
-//get problem id from fixer
-function findFixer(userId) {
-  const findfixerDoc = {}
-  findfixerDoc._id = userId
-  findfixerDoc.field = "UserId"
+function findPerson(userId) {
 
-  const findfixerOpt = {
-    'method' : 'post',
-    payload : JSON.stringify(findfixerDoc)
-  };
-  const fixerRes = UrlFetchApp.fetch(Endpoint+"/findFixer", findfixerOpt);
-  Logger.log(fixerRes);
-  problemId = fixerRes.getContentText();
-  
-  // Remove the square brackets from the string
-  // Parse the modified string into a JSON object
-  var jsonObject = JSON.parse(problemId)
-
-  var problemId = jsonObject[0].Problem;
-  Logger.log(problemId);
-  findProblem(problemId);
-}
-
-//sent problem info to admin form
-function findProblem(problemId) {
-  const findProblemrDoc = {
-    _id: problemId
-  };
-
-  const findProblemOpt = {
+  const findPersonOpt = {
     method: 'post',
-    payload: JSON.stringify(findProblemrDoc)
+    payload: JSON.stringify({ header : "Person" , query : { userID : userId , status : { $ne : "Finished"}} })
   };
 
   // เรียกใช้งาน UrlFetchApp ด้วย Endpoint และ findProblemOpt
-  const problemRes = UrlFetchApp.fetch(Endpoint + '/findProblem', findProblemOpt);
-  const problemFind = problemRes.getContentText();
-  const jsonData = JSON.parse(problemFind); 
-  Logger.log(jsonData);
+  const personRes = UrlFetchApp.fetch(Endpoint + '/find', findPersonOpt);
+  const personFind = personRes.getContentText();
+  const jsonData = JSON.parse(personFind); 
+  
+  // Logger.log(personFind)
+  // userName = jsonData[0].name
+  // Logger.log(userName);
   return jsonData;
 }
 
-// get all tools info
-function findTool() {
-  const toolOpt = {
+function findProblem(problemId) {
+
+  const findProblemOpt = {
     method: 'post',
+    payload: JSON.stringify({header : "Problem" , query : {_id : problemId}})
   };
 
-  const toolRes = UrlFetchApp.fetch(Endpoint + '/findTool', toolOpt);
-  const arrayTool = toolRes.getContentText();
-  Logger.log(toolRes.getResponseCode());
-  Logger.log(toolRes.getContentText());
-
-  return arrayTool;
+  // เรียกใช้งาน UrlFetchApp ด้วย Endpoint และ findProblemOpt
+  const problemRes = UrlFetchApp.fetch(Endpoint + '/find', findProblemOpt);
+  const problemFind = problemRes.getContentText();
+  const jsonData = JSON.parse(problemFind); 
+  Logger.log(jsonData);
+  //var owner_id = jsonData[0].owner
+  //findPerson(owner_id)
+  return jsonData;
 }
-
-
-//after finish admin form update problem status & after finish admin form update problem id in fixer
-function updateFinish(userId,problemId) {
-  const problemDoc = {}
-  problemDoc._id = problemId
-  problemDoc.status = "Finished"
-  problemDoc.finishDate = new Date
-
-  const problemOpt = {
-    method: 'post',
-    payload: JSON.stringify(problemDoc)
-  };
-
-  const problemRes = UrlFetchApp.fetch(Endpoint + '/updateProblem', problemOpt);
-  Logger.log(problemRes.getResponseCode());
-  Logger.log(problemRes.getContentText());
-
-  const fixerOpt = {
-    method: 'post',
-    payload: JSON.stringify({UserId : userId , Problem : null})
-  };
-
-  const fixerRes = UrlFetchApp.fetch(Endpoint + '/updateFixer', fixerOpt);
-  Logger.log(fixerRes.getResponseCode());
-  Logger.log(fixerRes.getContentText());
-
-
-}
-

@@ -1,3 +1,4 @@
+const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
 function assignProblemToFixer(problemId) {
   const status = 'In Progress';
   let fixerName = '';
@@ -7,8 +8,10 @@ function assignProblemToFixer(problemId) {
   
       if (fixers.length > 0) {
         // Assign the problem to the first available fixer
-        fixerName = fixers[0].Name;
-        fixerId = fixers[0].UserId;
+        fixers.sort((a, b) => a.Problem.length - b.Problem.length);
+        const assignedFixer = fixers[0];
+        const fixerName = assignedFixer.Name;
+        const fixerId = assignedFixer.UserId;
         return updateProblemStatusAndFixer(problemId, status, fixerId,fixerName);
       } else {
         console.log('No available fixers.');
@@ -22,20 +25,19 @@ function assignProblemToFixer(problemId) {
 
 // Function to get a list of available fixers
 function getAvailableFixers() {
-  const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo"; // เปลี่ยนเป็น URI ของ MongoDB ของคุณ
+   // เปลี่ยนเป็น URI ของ MongoDB ของคุณ
 
   const options = {
     method: "get",
     contentType: "application/json",
-    payload: JSON.stringify({ _id : null , field : "Problem"})
+    payload: JSON.stringify({ header : 'Fixer' , query : {}})
   };
 
-  const response = UrlFetchApp.fetch(mongodbUri + "/findFixer" , options);
+  const response = UrlFetchApp.fetch(mongodbUri + "/find" , options);
 
   if (response.getResponseCode() === 200) {
     const data = JSON.parse(response.getContentText());
-    // ตอนนี้คุณสามารถใช้ข้อมูลที่ได้จาก MongoDB ได้ตามต้องการ
-    // ตัวอย่าง: console.log(data);
+    Logger.log(data);
     return data;
   } else {
     console.error("Error fetching fixers data from MongoDB.");
@@ -44,25 +46,23 @@ function getAvailableFixers() {
 }
 
 // Function to update problem status and fixer
-function updateProblemStatusAndFixer(problemId, status, fixerName, fixerId) {
-  const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
-
+function updateProblemStatusAndFixer(problemId, status, fixerId, fixerName) {
   const problemOpt = {
+    header : 'Problem',
     method: "post",
     contentType: "application/json",
-    payload: JSON.stringify({_id : problemId , status : status , fixer : fixerName })
+    payload: JSON.stringify({header : "Problem" ,filter : {_id : problemId} , query : { status : status , fixer : fixerName }})
   };
 
   const fixerOpt = {
+    header : 'Fixer',
     method: "post",
     contentType: "application/json",
-    payload: JSON.stringify({UserId:fixerId,Problem:problemId})
+    payload: JSON.stringify({header : "Fixer" ,filter : {UserId : fixerId} , query : { Problem : problemId }})
   };
 
-  Logger.log(problemId)
-
-  const responseProblem = UrlFetchApp.fetch(mongodbUri + "/updateProblem", problemOpt);
-  const responseFixer = UrlFetchApp.fetch(mongodbUri + "/updateFixer", fixerOpt);
+  const responseProblem = UrlFetchApp.fetch(mongodbUri + "/updateSet", problemOpt);
+  const responseFixer = UrlFetchApp.fetch(mongodbUri + "/updatePush", fixerOpt);
   
   if (responseProblem.getResponseCode() === 200) {
     console.log(`Problem ${problemId} status updated to ${status} with fixer ${fixerName}`);

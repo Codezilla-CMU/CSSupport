@@ -1,93 +1,51 @@
 var userId = null;
 var displayName = null;
 var pictureUrl = null;
-var link = null;
-
-
-
-// old code
+var problem_id = null;
+var userName = null;
+var request = null;
+var location = null;
+var problemPicture = null;
+var receiveDate = null;
 
 function doGet(e) {
-  userId = e.parameter.userId;
-  displayName = e.parameter.displayName;
-  pictureUrl = e.parameter.pictureUrl;
+  /*userId = e.parameter.userId;*/
+  userId = 'Ua710c1847a661789b0d3a7b8f6d82727'
+  /*displayName = e.parameter.displayName;
+  pictureUrl = e.parameter.pictureUrl;*/
+  problem_id = findFixer(userId)[0].Problem
+  // Logger.log(problem_id[0])
+  // request = findProblem(problem_id[0])
+  // Logger.log(request)
+  // location = findProblem(problem_id)[0].location
+  // problemPicture = findProblem(problem_id)[0].problemPicture
+  // receiveDate = findProblem(problem_id)[0].receiveDate
+  // owner = findProblem(problem_id)[0].owner
+  // userName = findPerson(owner)[0].name
   
-  return HtmlService.createTemplateFromFile("index").evaluate().setTitle("ระบบแจ้งซ่อม Online")
-  .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
-  .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-}
+  var template = HtmlService.createTemplateFromFile("index");
+  var tool_list1 = findToolType('ไฟฟ้า');
+  template.tool_list1 = tool_list1;
 
+  var tool_list2 = findToolType('ไอที');
+  template.tool_list2 = tool_list2;
 
-function processForm(formObject){  
-  var result = "";
-  if(formObject.searchtext){
-      result = search(formObject.searchtext);
-  }
-  return result;
-}
+  var tool_list3 = findToolType('ประปา');
+  template.tool_list3 = tool_list3;
 
-function search(searchtext){
-  var spreadsheetId = '11ONVfN8YD_aBVflke-fUP-aYdY38z6zuUvlkaS_ZWKw';
-  var dataRage  = 'test!A2:D';
-  var data = Sheets.Spreadsheets.Values.get(spreadsheetId, dataRage).values;
-  var ar = [];
+  var tool_list4 = findToolType('ทั่วไป');
+  template.tool_list4 = tool_list4;
+
+  template.problem_id = problem_id;
   
-  data.forEach(function(f) {
-    if (~f.indexOf(searchtext)) {
-      ar.push(f);
-    }
-  });
-  return ar;
+  return template.evaluate();
+  /*.addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+  .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);*/
 }
 
-var SCRIPT_PROP = PropertiesService.getScriptProperties();
-var sheetID= '11ONVfN8YD_aBVflke-fUP-aYdY38z6zuUvlkaS_ZWKw'
-function setup() {
-    var doc = SpreadsheetApp.getActiveSpreadsheet();
-    SCRIPT_PROP.setProperty(sheetID, doc.getId());
-}
-
-function uploadFile(data, file, userId, displayName, pictureUrl, request, location) {
-try {
-    var folder=DriveApp.getFolderById('1wDbmiYqAErWyd6U8hR4hrsGm6n9E-vrx');
-    var contentType = data.substring(5,data.indexOf(';')),
-        bytes = Utilities.base64Decode(data.substr(data.indexOf('base64,')+7)),
-        blob = Utilities.newBlob(bytes, contentType, file),
-      file = folder.createFolder([displayName+new Date()]).createFile(blob),
-        filelid =file.getId() ;
-    const requests = request
-    const locations = location
-    const image = 'https://drive.google.com/uc?id='+filelid
-    var lock = LockService.getPublicLock();
-        lock.waitLock(30000);    
-    var doc = SpreadsheetApp.openById(sheetID);
-    var sheet = doc.getSheetByName("CSSupport");
-  recDate = new Date;
-  var problemId = insert2mongo(userId, displayName, pictureUrl, requests, locations, image,recDate)
-  sheet.appendRow([userId,displayName,pictureUrl,requests,locations,image,recDate])
-  assignProblemToFixer(problemId);
-  var token = 'lPHruWHnms1nBoK9ds5SWBAvem5JQEtZUoyO1vty3iE'
-  var message = '\n ผู้เเจ้ง : '+displayName+
-                '\n ปัญหาที่เเจ้ง : '+requests+
-                '\n สถานที่ : '+locations+
-                '\n วันที่ : '+recDate+
-                '\n รูปประกอบ : ' +image
-  sendLineNotify(message, token)
-    return "OK"
-   } catch (f) {
-    return f.toString();
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-function sendLineNotify(message, token) {
-  var options = {
-    "method": "post",
-    "payload": {
-      "message": message,
-    },
-    "headers": { "Authorization": "Bearer " + token }
-  };
-  UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+function saveRequest(userId, displayName, pictureUrl, request){
+  var sheetID = '11ONVfN8YD_aBVflke-fUP-aYdY38z6zuUvlkaS_ZWKw';
+  var doc = SpreadsheetApp.openById(sheetID);
+  var sheet = doc.getSheetByName("test");
+  sheet.appendRow([userId,displayName,pictureUrl,request])
 }

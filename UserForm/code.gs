@@ -1,14 +1,20 @@
 var userId = null;
 var displayName = null;
 var pictureUrl = null;
+var problemList = null;
+var userName = null;
+var request = null;
+var location = null;
+var problemPicture = null;
+var receiveDate = null;
 
 function doGet(e) {
   userId = e.parameter.userId;
-  displayName = e.parameter.displayName;
-  pictureUrl = e.parameter.pictureUrl;
-  findFixer(userId);
+  problemList = findPerson(userId)[0].problems
+  var template = HtmlService.createTemplateFromFile("index");
+  template.problemList = problemList;
   
-  return HtmlService.createTemplateFromFile("index").evaluate().setTitle("ระบบแจ้งซ่อม Online")
+  return template.evaluate().setTitle("สถานะงาน")
   .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
   .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
