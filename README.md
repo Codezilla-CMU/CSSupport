@@ -42,6 +42,7 @@ Before you begin, ensure you have met the following requirements:
 
    ```shell
    git clone https://github.com/Codezilla-CMU/CSSupport.git
+Don't forget to **extract** the .zip file.
 
 2. Install the project dependencies:
 
