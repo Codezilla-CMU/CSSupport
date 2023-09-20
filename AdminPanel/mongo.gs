@@ -20,9 +20,9 @@ function insert2mongo(userId, displayName, pictureUrl, requests, locations, imag
     header : 'Problem',
   'contentType': 'application/json',
   method: 'post',
-  payload : JSON.stringify(problemDoc)
+  payload : JSON.stringify({header : 'Problem' , query : problemDoc})
   };
-  const problemRes = UrlFetchApp.fetch(Endpoint+"/insertProblem", problemOpt);
+  const problemRes = UrlFetchApp.fetch(Endpoint+"/insert", problemOpt);
   problemId = problemRes.getContentText().replace(/["\\]/g, '');
   Logger.log(problemRes.getResponseCode());
   Logger.log(problemId);
@@ -46,13 +46,13 @@ function insert2mongo(userId, displayName, pictureUrl, requests, locations, imag
       header : 'Person',
       'contentType': 'application/json',
       method: 'post',
-      payload : JSON.stringify(personDoc)
+      payload : JSON.stringify({ header : 'Person' , query : personDoc})
     };
-    const personRes = UrlFetchApp.fetch(Endpoint+"/insertPerson", personOpt);
+    const personRes = UrlFetchApp.fetch(Endpoint+"/insert", personOpt);
     Logger.log(personRes.getResponseCode());
     Logger.log(personRes.getContentText());
   }
-  return problemId;
+  return pid;
 }
 
 //function that increase problems of client incase of 1 client report many problems

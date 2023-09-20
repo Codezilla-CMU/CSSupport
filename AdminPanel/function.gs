@@ -1,4 +1,4 @@
-
+const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
 function hideColumns() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var selectedRange = sheet.getActiveRange();
@@ -19,10 +19,6 @@ function showColumns() {
   sheet.showColumns(column, numColumns);
 }
 
-
-
-
-
 // Function to insert data into the "Fixer" collection in MongoDB
 function insertFixerToMongo(name, userId, tel, problem) {
   const fixerDoc = {
@@ -33,12 +29,13 @@ function insertFixerToMongo(name, userId, tel, problem) {
   };
 
   const fixerOpt = {
+    header : 'Fixer',
     'contentType': 'application/json',
     method: 'post',
-    payload: JSON.stringify(fixerDoc)
+    payload: JSON.stringify({ header : "Fixer" , query : fixerDoc })
   };
 
-  const fixerRes = UrlFetchApp.fetch("https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo" + "/insertFixer", fixerOpt);
+  const fixerRes = UrlFetchApp.fetch(mongodbUri + "/insert", fixerOpt);
   const fixerId = fixerRes.getContentText().replace(/["\\]/g, '');
   Logger.log(fixerRes.getResponseCode());
   Logger.log(fixerId);

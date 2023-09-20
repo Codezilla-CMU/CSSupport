@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบแจ้งซ่อม Online</title>
+    <title>อัฟเดตงานจร้า</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.6/dist/sweetalert2.min.css">
     <style>
         input[type=text],
@@ -57,7 +57,7 @@
 </head>
 
 <body>
-    <div class="show" style="display:inline-block">
+    <div id="show">
       <div class="box-gray">
           <input type="text" id="userId" value="<?= userId ?>" style="display:none">
           <label for="request">รหัสงาน</label>
@@ -133,13 +133,13 @@
         const listOfProblemId = <?= JSON.stringify(problem_id) ?>;
         const parselistOfProblemId = JSON.parse(listOfProblemId);
 
-        var formshow = document.getElementById("show");
-        if(parselistOfProblemId.length > 0){
-            formshow.style.display = "inline-block";
-        }
-        else{
-            formshow.style.display = "none"
-        }
+        // var formshow = document.getElementById("show");
+        // if(parselistOfProblemId.length > 0){
+        //     formshow.style.display = "inline-block";
+        // }
+        // else{
+        //     formshow.style.display = "none"
+        // }
 
         const optionSelect = document.getElementById("problem_id_Select");
 
@@ -232,23 +232,31 @@
           const dropdownContainer = document.getElementById('dropdown-electric');
           const newDropdownSelect = document.createElement('select');
           newDropdownSelect.name = 'dropdown[]';
+          newDropdownSelect.addEventListener('change', function () {
+            showInput(this); // เรียกใช้ฟังก์ชัน showInput() เมื่อเปลี่ยนค่าใน dropdown
+          });
 
           const newDropdownCountSelect = document.createElement('select');
           newDropdownCountSelect.name = 'dropdownCount[]';
 
           var data = JSON.parse(jsonData1);
           for (var i = 0; i < data.length; i++) {
-              var option = document.createElement('option');
-              option.value = data[i].name;
-              option.textContent = data[i].name;
-              newDropdownSelect.appendChild(option);
+            var option = document.createElement('option');
+            option.value = data[i].name;
+            option.textContent = data[i].name;
+            newDropdownSelect.appendChild(option);
           }
 
+          var option = document.createElement('option');
+          option.value = 'other';
+          option.textContent = 'อื่นๆ';
+          newDropdownSelect.appendChild(option);
+
           for (var i = 1; i < 11; i++) {
-              var option = document.createElement('option');
-              option.value = i;
-              option.textContent = i;
-              newDropdownCountSelect.appendChild(option);
+            var option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            newDropdownCountSelect.appendChild(option);
           }
 
           // สร้างปุ่ม "ลบ Dropdown"
@@ -257,13 +265,42 @@
           deleteButton.className = 'delete';
           deleteButton.textContent = 'ลบ Dropdown';
           deleteButton.onclick = function () {
-                removeDropdown(this); // เรียกฟังก์ชัน removeDropdown_electric() เมื่อปุ่มถูกคลิก
-            };
+            removeDropdown(this); // เรียกฟังก์ชัน removeDropdown_electric() เมื่อปุ่มถูกคลิก
+          };
 
-            dropdownContainer.appendChild(newDropdownSelect);
-            dropdownContainer.appendChild(newDropdownCountSelect);
-            dropdownContainer.appendChild(deleteButton);
+          const inputField = document.createElement('div');
+          inputField.id = 'inputField';
+          inputField.style.display = 'none';
+          inputField.innerHTML = `
+            <label for="otherOption">เพิ่มอุปกรณ์</label>
+            <input type="text" id="newTool" name="newTool">
+            <label for="otherOption">ราคาต่อชิ้น</label>
+            <input type="text" id="pricePerTool" name="pricePerTool">
+          `;
+
+          dropdownContainer.appendChild(newDropdownSelect);
+          dropdownContainer.appendChild(inputField);
+          dropdownContainer.appendChild(newDropdownCountSelect);
+          dropdownContainer.appendChild(deleteButton);
         }
+
+        function showInput(selectElement) {
+          const dropdownContainer = selectElement.parentNode;
+          const dropdownSelect = dropdownContainer.querySelector('select[name="dropdown[]"]');
+          var inputField = dropdownContainer.querySelector('#inputField');
+
+          if (dropdownSelect.value === 'other') {
+            inputField.style.display = 'block';
+          } else {
+            inputField.style.display = 'none';
+          }
+        }
+
+        function removeDropdown(button) {
+          const dropdownContainer = button.parentNode;
+          dropdownContainer.parentNode.removeChild(dropdownContainer);
+        }
+
 
         function addDropdownIT() {
             const dropdownContainer = document.getElementById('dropdown-IT');
@@ -287,6 +324,7 @@
               option.textContent = i;
               newDropdownCountSelect.appendChild(option);
             }
+            
             // สร้างปุ่ม "ลบ Dropdown"
             var deleteButton = document.createElement('button');
             deleteButton.type = 'button';
@@ -374,20 +412,24 @@
         }
 
         function removeDropdown(button) {
-            const dropdownContainer = button.parentNode; // ดึง element ของ dropdown container
-            const dropdownSelect = dropdownContainer.querySelector('select[name="dropdown[]"]'); // ดึง element ของ dropdown select ที่มี name เป็น 'dropdown[]'
+          const dropdownContainer = button.parentNode; // ดึง element ของ dropdown container
+          const dropdownSelect = dropdownContainer.querySelector('select[name="dropdown[]"]'); // ดึง element ของ dropdown select ที่มี name เป็น 'dropdown[]'
 
-            const dropdownCountSelect = dropdownContainer.querySelector('select[name="dropdownCount[]"]');
+          const dropdownCountSelect = dropdownContainer.querySelector('select[name="dropdownCount[]"]');
 
-            if (dropdownSelect) {
-                dropdownContainer.removeChild(dropdownSelect); // ลบ dropdown select
-            }
+          if (dropdownSelect) {
+            dropdownContainer.removeChild(dropdownSelect); // ลบ dropdown select
+          }
 
-            if (dropdownCountSelect){
-                dropdownContainer.removeChild(dropdownCountSelect); 
-            }
+          if (dropdownCountSelect){
+            dropdownContainer.removeChild(dropdownCountSelect); 
+          }
 
-            dropdownContainer.removeChild(button); // ลบปุ่ม "ลบ Dropdown"
+          dropdownContainer.removeChild(button); // ลบปุ่ม "ลบ Dropdown"
+          const textpopup = dropdownContainer.querySelector('div[id="inputField"]');
+          if (textpopup) {
+            dropdownContainer.removeChild(textpopup); // ลบ div ที่มี id เป็น "inputField"
+          }
         }
 
         function getDropdownValues() {

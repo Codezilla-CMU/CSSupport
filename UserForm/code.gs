@@ -11,12 +11,21 @@ var receiveDate = null;
 function doGet(e) {
   userId = e.parameter.userId;
   problemList = findPerson(userId)[0].problems
-  var template = HtmlService.createTemplateFromFile("index");
-  template.problemList = problemList;
+  if (problemList.length > 0) {
+    var template = HtmlService.createTemplateFromFile("index");
+    template.problemList = problemList;
+    
+    return template.evaluate().setTitle("สถานะงาน")
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } else {
+    var template = HtmlService.createTemplateFromFile("idle");
+    
+    return template.evaluate().setTitle("สถานะงาน")
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
   
-  return template.evaluate().setTitle("สถานะงาน")
-  .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
-  .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function saveRequest(userId, displayName, pictureUrl, request){

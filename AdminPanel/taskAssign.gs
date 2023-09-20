@@ -1,4 +1,4 @@
-const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
+
 function assignProblemToFixer(problemId) {
   const status = 'In Progress';
   let fixerName = '';
@@ -63,7 +63,6 @@ function updateProblemStatusAndFixer(problemId, status, fixerId, fixerName) {
 
   const responseProblem = UrlFetchApp.fetch(mongodbUri + "/updateSet", problemOpt);
   const responseFixer = UrlFetchApp.fetch(mongodbUri + "/updatePush", fixerOpt);
-  
   if (responseProblem.getResponseCode() === 200) {
     console.log(`Problem ${problemId} status updated to ${status} with fixer ${fixerName}`);
   } else {
@@ -74,5 +73,25 @@ function updateProblemStatusAndFixer(problemId, status, fixerId, fixerName) {
   } else {
     console.error("Error updating problem fixer in MongoDB.");
   }
+}
+
+function sendFlexFixer(problemId, fixerId) {
+  const findProblemOpt = {
+    method : 'post',
+    payload : JSON.stringify({ header : "Problem" ,query :{ _id: problemId} })
+  }
+  const problemRes = UrlFetchApp.fetch(Endpoint+"/find", findProblemOpt);
+  const pres = JSON.parse(problemRes.getContentText());
+
+  const findPersonOpt = {
+    method : 'post',
+    payload : JSON.stringify({ header : "Person" ,query :{ userID: pres[0].owner} })
+  }
+  const personRes = UrlFetchApp.fetch(Endpoint+"/find", findPersonOpt);
+  const displayName = JSON.parse(personRes.getContentText())[0].name
+
+  var flex = createFlexMessage(displayName, pres[0].request, pres[0].location, pres[0].receiveDate
+  , pres[0].problemPicture, problemId, pres[0].status);
+  sendFlexMessage(flex, fixerId, problemId);
 }
 

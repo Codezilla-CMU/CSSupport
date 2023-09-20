@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Form</title>
+</head>
+<body>
+    <h1>Contact Us</h1>
+    <form id="contactForm">
+        <label for="name">Name:</label>
+        <input type="text" id="Name" name="name" required><br><br>
+        
+        <label for="tel">Telephone:</label>
+        <input type="text" id="Tel" name="tel" required><br><br>
+        
+        <input type="submit" id="button" onclick="submitForm()" value="Submit">
+    </form>
+    <div id="success" style="display:none">
+        <h4 >
+        <center> บันทึกข้อมูลเรียบร้อย! </center>
+        </h4>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function showSuccess(e) {
+            if (e === "OK") {
+                $('#contactForm').hide();
+                $('#success').show();
+                setTimeout(function () {
+                window.close(); // Close the site after a delay
+                }, 3000); 
+
+            } else {
+                showError(e);
+                setTimeout(function () {
+                window.close(); // Close the site after a delay
+                }, 3000); 
+            }
+        }
+
+        function showError(e) {
+            Swal.fire({
+                title: 'คุณกรอกข้อมูลยังไม่ครบ!',
+                text: e,
+                icon: 'error',
+                confirmButtonText: 'ตกลง'
+            })
+        }
+
+        function submitForm() {
+            document.getElementById("button").style.display = "none"
+            showMessage("...ระบบกำลังบันทึกข้อมูล...");
+            let userId = '<?= userId ?>';
+            let pictureUrl = '<?= pictureUrl ?>';
+            const jsonData = {}
+              jsonData.Name = $('input#Name').val()
+              jsonData.UserId = userId
+              jsonData.Tel = $('input#Tel').val()
+              jsonData.Problem = []
+            console.log(jsonData);
+            google.script.run.withSuccessHandler(function (result) {
+                if (result === "OK") {
+                    showSuccess(); // Show success and close after a delay
+                } else {
+                    showError(result);
+                }
+            }).insertFixer(JSON.stringify(jsonData));
+        }
+
+        function showMessage(e) {
+            Swal.fire({
+                title: '...กรุณารอสักครู...',
+                text: '...ระบบกำลังบันทึกข้อมูล...',
+                showConfirmButton: false,
+                timer: 1000
+            })
+        }
+
+        
+    </script>
+</body>
+</html>
