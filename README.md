@@ -1,6 +1,6 @@
 # CS Support
 
-![CS Support Logo](link_to_logo_image)
+<img src="https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/379390111_634198118838077_4457339973200096694_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=ae9488&_nc_ohc=CVh_2ug9m8IAX-EUWN-&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdQEU0DWd0WwqUwiv-IAA1-Un4ouCIIR5i2moupMNayoGA&oe=6532808B" width="200" height="400" />
 
 CS Support is a platform designed to support computer science students by providing access to resources, facilitating discussions, and fostering collaboration within the community.
 
@@ -16,11 +16,10 @@ CS Support is a platform designed to support computer science students by provid
 
 ## Features
 
-- **Resource Library:** Access a vast collection of programming tutorials, articles, and reference materials.
-- **Discussion Forums:** Engage in discussions, ask questions, and share your knowledge with the community.
-- **Collaboration:** Find like-minded peers for group projects or study sessions.
-- **User Profiles:** Customize your profile to showcase your skills and interests.
-- **Notifications:** Stay informed with updates on new resources and interactions.
+- **Report an issue:** Report the issue that has occured in your distinct environment in order to let the admin/manager acknowledged the problem.
+- **Tracking:** Track the status of the issue/problem that has been reported to the bot.
+- **Cost Evaluation:** Built in material cost evaluation that is used for fixing/maintenance the problem/issue.
+- **Notifications:** Stay informed with updates on the reported issue.
 
 ## Getting Started
 
@@ -28,7 +27,15 @@ CS Support is a platform designed to support computer science students by provid
 
 Before you begin, ensure you have met the following requirements:
 
-- **Node.js:** You need Node.js installed on your system. You can download it from [nodejs.org](https://nodejs.org/).
+- **Window** You need Node.js installed on your system. You can download it from [nodejs.org](https://nodejs.org/).
+- **Linux:** For Linux users, you can install npm through terminal by using
+    ```shell
+    $ sudo apt install npm
+    OR
+    $ sudo apt install npm nodejs
+- To see the version of npm and verify it’s installed on the system:
+    ```shell
+    $ npm --version
 
 ### Installation
 
@@ -42,16 +49,12 @@ Before you begin, ensure you have met the following requirements:
    ```shell
    npm install
 
-3. Start the development server:
-
-   ```shell
-   npm start
-
-The application should now be running locally. You can access it in your web browser at http://localhost:3000.
+3. For the next step, you need to import the cloned code to the **Google App Script** in order to deploy the code through the server for usage.
 
 ## Usage
 
-- **Create an Account:** Sign up for an account to unlock all the features of CS Support.
+- **Add CSSupport:** Add CSSupport bot through the provided QR Code below:
+    [CSSupport QR Code](link_to_logo_image)
 - **Explore Resources:** Browse the resource library to find articles, tutorials, and more.
 - **Join Discussions:** Participate in discussions by asking questions and sharing your expertise.
 - **Connect with Peers:** Find and connect with other users who share your interests or collaborate on projects.
@@ -74,8 +77,47 @@ Please follow our [Contribution Guidelines](CONTRIBUTING.md) for more details.
 
 This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
 
+
+
    
 
 
+## Deployment
 
-   
+To deploy this project run
+
+```bash
+  npm run deploy
+```
+
+
+## 🛠 Skills
+- Programming Language: HTML, JavaScript, CSS
+- Extensive skills/tools: Line OA, MongoDB, Google Sheets
+
+
+## 🔗 Links
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://katherineoelsner.com/)
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/)
+[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/)
+
+
+## Authors
+
+- [@nakarinnn](https://www.github.com/nakarinnn)
+- [@neskinggoblin](https://www.github.com/neskinggoblin)
+- [@flukexp](https://www.github.com/flukexp)
+- [@Tomu1572](https://www.github.com/Tomu1572)
+- [@nmolpoom10788](https://www.github.com/nmolpoom10788)
+- [@Guit4r](https://www.github.com/Guit4r)
+- [@nonnychan](https://www.github.com/nonnychan)
+
+
+## Badges
+
+Add badges from somewhere like: [shields.io](https://shields.io/)
+
+![NPM](https://img.shields.io/npm/l/sweetalert)
+![GitHub](https://img.shields.io/github/license/Codezilla-CMU/CSSupport)
+
+
