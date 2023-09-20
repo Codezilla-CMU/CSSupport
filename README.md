@@ -1,6 +1,5 @@
 # CS Support
-
-<img src="https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/379390111_634198118838077_4457339973200096694_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=ae9488&_nc_ohc=CVh_2ug9m8IAX-EUWN-&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdQEU0DWd0WwqUwiv-IAA1-Un4ouCIIR5i2moupMNayoGA&oe=6532808B" width="200" height="400" />
+<img align="right" src="https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/379390111_634198118838077_4457339973200096694_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=ae9488&_nc_ohc=CVh_2ug9m8IAX-EUWN-&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdQEU0DWd0WwqUwiv-IAA1-Un4ouCIIR5i2moupMNayoGA&oe=6532808B" width="250" height="250" />
 
 CS Support is a platform designed to support computer science students by providing access to resources, facilitating discussions, and fostering collaboration within the community.
 
@@ -55,10 +54,8 @@ Before you begin, ensure you have met the following requirements:
 
 - **Add CSSupport:** Add CSSupport bot through the provided QR Code below:
     [CSSupport QR Code](link_to_logo_image)
-- **Explore Resources:** Browse the resource library to find articles, tutorials, and more.
-- **Join Discussions:** Participate in discussions by asking questions and sharing your expertise.
-- **Connect with Peers:** Find and connect with other users who share your interests or collaborate on projects.
-- **Customize Your Profile:** Personalize your profile to highlight your skills and interests.
+- **Rich Menu:** Browse the specific function in the rich menu.
+- **Report:** Report the issue through the bot.
 
 ## Contributing
 
@@ -84,10 +81,10 @@ This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md)
 
 ## Deployment
 
-To deploy this project run
+To deploy this project
 
 ```bash
-  npm run deploy
+  RUN/DEPLOY through Google App Script
 ```
 
 
