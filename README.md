@@ -48,7 +48,7 @@ Before you begin, ensure you have met the following requirements:
    ```shell
    npm install
 
-3. For the next step, you need to import the cloned code to the **Google App Script** in order to deploy the code through the server for usage.
+3. For the next step, you need to import the code to **Google App Script**, in order to deploy the code through the server for usage.
 
 ## Usage
 
