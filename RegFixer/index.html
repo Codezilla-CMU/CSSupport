@@ -1,42 +1,238 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+        integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+   
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mitr">
+    
     <title>Contact Form</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #3d3f3f, #252525, #000000);
+           
+            display: block;
+            font-family: 'Mitr', sans-serif;
+            overflow-y: auto;
+            /* เพิ่มเนื้อหาเมื่อมีมากเกินไปในหน้าจอเล็ก */
+            margin-bottom: 30px;
+
+
+        }
+
+        .container {
+
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: 15px;
+            padding-left: 15px;
+            width: 100%;
+
+
+        }
+
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        .card-columns .card {
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 576px) {
+            .card-columns {
+                column-count: 3;
+                column-gap: 1.25rem;
+            }
+
+            .card-columns .card {
+                display: inline-block;
+                width: 100%;
+            }
+        }
+
+        .text-muted {
+            color: #9faecb !important;
+        }
+        
+
+        p {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+
+        /* ให้ card มีความกว้างเต็มหน้าจอเวลาแสดงผลบนโทรศัพท์มือถือ */
+        @media (max-width: 576px) {
+            .card {
+                width: 100%;
+                height: 50%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Contact Us</h1>
-    <form id="contactForm">
-        <label for="name">Name:</label>
-        <input type="text" id="Name" name="name" required><br><br>
-        
-        <label for="tel">Telephone:</label>
-        <input type="text" id="Tel" name="tel" required><br><br>
-        
-        <input type="submit" id="button" onclick="submitForm()" value="Submit">
-    </form>
-    <div id="success" style="display:none">
-        <h4 >
-        <center> บันทึกข้อมูลเรียบร้อย! </center>
-        </h4>
+
+    <br>
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-15 col-14"> <!-- เพิ่ม col-12 ใน class -->
+                <div class="card-group mb-0">
+                  <div class="card text-white bg-primary py-5 d-md-down-none" style="width:100%">
+                        <div class="card-body text-center">
+                            <div>
+                                <h2>Add Fixer</h2>
+                                <p> ใช้สำหรับเพิ่ม new fixer ลงในฐานข้อมูล เเละ โดยฐานข้อมูลคือ mongoDB ใช้ในการเก็บข้อมูล fixer
+                                    ซึ๋งจะเพิ่ม Name เเละ Tel ของ fixer ลงในฐานข้อมูล</p>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4">
+                        <div class="card-body">
+                            <form id="forms">
+                            <div id="forminner">
+                                <h3>เพิ่มช่างซ่อมบำรุง</h3>
+                                <p class="text-muted">เพิ่ม fixer to mongoDB</p>
+                                <label for="id">ชื่อช่าง</label>
+                                <div class="input-group mb-3">
+                                    <input type="name" class="form-control" placeholder="FixerName" id="Name"
+                                        name="displayName" required>
+                                </div>
+                                <label for="stdCode">เบอร์ติดต่อ</label>
+                                <div class="input-group mb-4">
+                                    <input type="phone" class="form-control" id="Tel" name="Tel" placeholder="0xx-xxx-xxxx"
+                                    pattern="0[0-9]{2}-[0-9]{3}-[0-9]{4}" 
+                                    title="Please enter a valid phone number in the format 0xx-xxx-xxxx" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input id="button" type="submit" class="btn btn-primary px-6"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                            <div>
+                                <div id="success" style="display:none">
+                                    <h4 class="left-align teal-text">
+                                        <center>
+                                            บันทึกข้อมูลเรียบร้อย!
+                                        </center>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var form = document.getElementById("forms"); // Get the form element by its ID
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                submitForm(); // Call the submitForm() function
+            });
+        });
+  
         function showSuccess(e) {
             if (e === "OK") {
-                $('#contactForm').hide();
+                $('#forminner').hide();
                 $('#success').show();
-                setTimeout(function () {
-                window.close(); // Close the site after a delay
-                }, 3000); 
-
+                $('#image').hide();
             } else {
                 showError(e);
-                setTimeout(function () {
-                window.close(); // Close the site after a delay
-                }, 3000); 
             }
+        }
+
+        function submitForm() {
+            document.getElementById("button").style.display = "none"
+            let userId = '<?= userId ?>';
+            let pictureUrl = '<?= pictureUrl ?>';
+            const jsonData = {}
+            jsonData._id = userId
+            jsonData.role = "Fixer"
+            jsonData.name = $('input#Name').val()
+            jsonData.tel = $('input#Tel').val()
+            jsonData.profilePicture = pictureUrl
+            jsonData.problems = []
+            
+
+
+            console.log("Calling insertFixer with data: " + JSON.stringify(jsonData));
+            google.script.run.withSuccessHandler(function (result) {
+                if (result == '1') {
+                    alert('คุณเป็นช่างซ่อมอยู่เเล้ว')
+                    window.top.close();
+                }
+                else if (result == '2') {
+                    showMessage("...ระบบกำลังบันทึกข้อมูล...");
+                    google.script.run.withSuccessHandler(function (status) {
+                        if (status == "OK") {
+                            Swal.close();
+                            showSuccess(status);
+                        } else {
+                            showError(status);
+                        }
+                    }).insertFixer(JSON.stringify(jsonData))
+                }
+                else {
+                    showMessage("...ระบบกำลังบันทึกข้อมูล...");
+                    google.script.run.withSuccessHandler(function (status) {
+                        if (status == "OK") {
+                            Swal.close();
+                            showSuccess(status);
+                        } else {
+                            showError(status);
+                        }
+                    }).updateFixer(JSON.stringify(jsonData))
+                }
+            }).checkDup(jsonData);
         }
 
         function showError(e) {
@@ -48,36 +244,19 @@
             })
         }
 
-        function submitForm() {
-            document.getElementById("button").style.display = "none"
-            showMessage("...ระบบกำลังบันทึกข้อมูล...");
-            let userId = '<?= userId ?>';
-            let pictureUrl = '<?= pictureUrl ?>';
-            const jsonData = {}
-              jsonData.Name = $('input#Name').val()
-              jsonData.UserId = userId
-              jsonData.Tel = $('input#Tel').val()
-              jsonData.Problem = []
-            console.log(jsonData);
-            google.script.run.withSuccessHandler(function (result) {
-                if (result === "OK") {
-                    showSuccess(); // Show success and close after a delay
-                } else {
-                    showError(result);
-                }
-            }).insertFixer(JSON.stringify(jsonData));
-        }
-
         function showMessage(e) {
             Swal.fire({
                 title: '...กรุณารอสักครู...',
                 text: '...ระบบกำลังบันทึกข้อมูล...',
                 showConfirmButton: false,
-                timer: 1000
+                willOpen: () => {
+                    Swal.showLoading();
+                }
             })
         }
-
-        
     </script>
+
+
 </body>
+
 </html>
