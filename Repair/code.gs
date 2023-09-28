@@ -10,6 +10,10 @@ function doGet(e) {
   displayName = e.parameter.displayName;
   pictureUrl = e.parameter.pictureUrl;
 
+  // userId = "U9d2bbec5c40e6a3278f0f077b02c4c2e";
+  // displayName = 'Fluke';
+  // pictureUrl = 'https://profile.line-scdn.net/0hiecjDENiNkpOEx7tnQdINT5DNSBtYm9YZHV5eS9EYX9wKyQeayJ7e3IUbXkjJCFMMiB9LC5BOHJCAEEsUEXKfkkja3tyInMea3xwrg';
+
   return HtmlService.createTemplateFromFile("index").evaluate().setTitle("ระบบแจ้งซ่อม Online")
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -45,7 +49,7 @@ function setup() {
   SCRIPT_PROP.setProperty(sheetID, doc.getId());
 }
 
-function uploadFile(data, file, userId, displayName, pictureUrl, request, location) {
+function uploadFile(data, file,userId, displayName, pictureUrl, request, location) {
   try {
     var folder = DriveApp.getFolderById('1wDbmiYqAErWyd6U8hR4hrsGm6n9E-vrx');
     var contentType = data.substring(5, data.indexOf(';')),
@@ -53,49 +57,30 @@ function uploadFile(data, file, userId, displayName, pictureUrl, request, locati
       blob = Utilities.newBlob(bytes, contentType, file),
       file = folder.createFolder([displayName + new Date()]).createFile(blob),
       filelid = file.getId();
-    const requests = request
-    const locations = location
     const image = 'https://drive.google.com/uc?id=' + filelid
-    var lock = LockService.getPublicLock();
-    lock.waitLock(30000);
-    var doc = SpreadsheetApp.openById(sheetID);
-    var sheet = doc.getSheetByName("Problem");
-    recDate = new Date;
-    var problemId = insert2mongo(userId, displayName, pictureUrl, requests, locations, image, recDate)
-    sheet.appendRow([userId, displayName, pictureUrl, requests, locations, image, recDate])
-    assignProblemToFixer(problemId);
-    var tokens = 'rNIQjZJV8fwM7N1Q5dxC9xscQTPuF5LTczHpH79QHs2'
-    var message = '\n ผู้เเจ้ง : ' + displayName +
-      '\n ปัญหาที่เเจ้ง : ' + requests +
-      '\n สถานที่ : ' + locations +
-      '\n วันที่ : ' + recDate +
-      '\n รูปประกอบ : ' + image
-    sendLineNotify(message, tokens)
-    var status = "Received";
-    // สร้าง Flex Message และข้อความ Problem ID
-    var flexMessage = createFlexMessage(userId, displayName, request, location, recDate, image, problemId, status);
 
-    // ส่ง Flex Message และข้อความ Problem ID ไปยังผู้ใช้
-    sendFlexMessageToUser(flexMessage ,userId, problemId);
+      var recDate = new Date();
+      var thaiRecDate = formatThaiDateTime(recDate);
+
+      var problemId = insert2mongo(userId, displayName, pictureUrl, request, location, image, recDate)
+      var fixerName = assignProblemToFixer(problemId);
+
+      var status = "Recieved";
+      var flexMessage = createFlexMessage(fixerName, request, location, thaiRecDate, image, problemId, status);
+      sendFlexMessage(flexMessage ,userId, problemId);
+
     return "OK"
   } catch (f) {
     return f.toString();
-  } finally {
-    lock.releaseLock();
   }
 }
 
-function sendLineNotify(message, token) {
-  var options = {
-    "method": "post",
-    "payload": {
-      "message": message,
-    },
-    "headers": { "Authorization": "Bearer " + token }
-  };
-  UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+function formatThaiDateTime(dateString) {
+  var timeZone = 'Asia/Bangkok'; // Time zone for Bangkok
+  var date = new Date(dateString);
+  var thaiDate = Utilities.formatDate(date, timeZone, 'dd/MM/yyyy HH:mm:ss');
+  return thaiDate;
 }
-
 
 
 

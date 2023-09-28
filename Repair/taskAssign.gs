@@ -1,6 +1,5 @@
 
 function assignProblemToFixer(problemId) {
-  const status = 'In Progress';
   let fixerName = '';
 
   // Get available fixers
@@ -8,19 +7,20 @@ function assignProblemToFixer(problemId) {
   
       if (fixers.length > 0) {
         // Assign the problem to the first available fixer
-        fixers.sort((a, b) => a.Problem.length - b.Problem.length);
+        fixers.sort((a, b) => 
+        a.problems.filter(subarray => subarray[1] === "Fixer").length - 
+        b.problems.filter(subarray => subarray[1] === "Fixer").length);
         const assignedFixer = fixers[0];
-        const fixerName = assignedFixer.Name;
-        const fixerId = assignedFixer.UserId;
-        return updateProblemStatusAndFixer(problemId, status, fixerId,fixerName);
+        const fixerName = assignedFixer.name;
+        const fixerId = assignedFixer._id;
+        updateProblemStatusAndFixer(problemId, fixerId,fixerName);
+        return fixerName;
+         
       } else {
         console.log('No available fixers.');
+         return '';
       }
     
-    
-      Logger.log(`Problem ${problemId} assigned to Fixer ${fixerName} and status updated to ${status}`);
-    
-  
 }
 
 // Function to get a list of available fixers
@@ -30,7 +30,7 @@ function getAvailableFixers() {
   const options = {
     method: "get",
     contentType: "application/json",
-    payload: JSON.stringify({ header : 'Fixer' , query : {}})
+    payload: JSON.stringify({ header : 'Person' , query : { role : "Fixer"}})
   };
 
   const response = UrlFetchApp.fetch(mongodbUri + "/find" , options);
@@ -46,36 +46,37 @@ function getAvailableFixers() {
 }
 
 // Function to update problem status and fixer
-function updateProblemStatusAndFixer(problemId, status, fixerId, fixerName) {
+function updateProblemStatusAndFixer(problemId, fixerId, fixerName) {
   const problemOpt = {
-    header : 'Problem',
     method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify({header : "Problem" ,filter : {_id : problemId} , query : { status : status , fixer : fixerName }})
+    payload: JSON.stringify({header : "Problem" ,filter : {_id : problemId} , query : { fixer : fixerName }})
   };
 
   const fixerOpt = {
-    header : 'Fixer',
     method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify({header : "Fixer" ,filter : {UserId : fixerId} , query : { Problem : problemId }})
+    payload: JSON.stringify({header : "Person" ,filter : {_id : fixerId} , query : { problems : [problemId,"Fixer"] }})
   };
 
   const responseProblem = UrlFetchApp.fetch(mongodbUri + "/updateSet", problemOpt);
   const responseFixer = UrlFetchApp.fetch(mongodbUri + "/updatePush", fixerOpt);
+  sendFlexFixer(problemId, fixerId)
+  updateProblemSheet(problemId,fixerName,9);
   if (responseProblem.getResponseCode() === 200) {
-    console.log(`Problem ${problemId} status updated to ${status} with fixer ${fixerName}`);
+    console.log(`Problem ${problemId} assigned to Fixer ${fixerName} `);
   } else {
     console.error("Error updating problem status in MongoDB.");
   }
   if (responseFixer.getResponseCode() === 200) {
-    console.log(`Problem ${problemId} status updated to ${status} with fixer ${fixerName}`);
+    console.log(`Problem ${problemId} assigned to Fixer ${fixerName} `);
   } else {
     console.error("Error updating problem fixer in MongoDB.");
   }
 }
 
 function sendFlexFixer(problemId, fixerId) {
+  //problemId = "15de713c-68c0-4b7f-bd2c-f16d7d20f30f"
+  //fixerId = "U9d2bbec5c40e6a3278f0f077b02c4c2fff3"
+
   const findProblemOpt = {
     method : 'post',
     payload : JSON.stringify({ header : "Problem" ,query :{ _id: problemId} })
@@ -85,13 +86,24 @@ function sendFlexFixer(problemId, fixerId) {
 
   const findPersonOpt = {
     method : 'post',
-    payload : JSON.stringify({ header : "Person" ,query :{ userID: pres[0].owner} })
+    payload : JSON.stringify({ header : "Person" ,query :{ _id: pres[0].owner} })
   }
   const personRes = UrlFetchApp.fetch(Endpoint+"/find", findPersonOpt);
   const displayName = JSON.parse(personRes.getContentText())[0].name
+  pres[0].recieveDate = formatThaiDateTime(new Date(pres[0].recieveDate));
 
-  var flex = createFlexMessage(displayName, pres[0].request, pres[0].location, pres[0].receiveDate
+  var flex = createFlexMessageFixer(displayName, pres[0].request, pres[0].location, pres[0].recieveDate
   , pres[0].problemPicture, problemId, pres[0].status);
   sendFlexMessage(flex, fixerId, problemId);
 }
+
+function formatThaiDateTime(dateString) {
+  var timeZone = 'Asia/Bangkok'; // Time zone for Bangkok
+  var date = new Date(dateString);
+  var thaiDate = Utilities.formatDate(date, timeZone, 'dd/MM/yyyy HH:mm:ss');
+  return thaiDate;
+}
+
+
+
 

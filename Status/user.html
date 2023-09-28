@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เชคสถานะงาน</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+    integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.6/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #3d3f3f, #252525, #000000);
+      margin-top: 30px;
+      margin-bottom: 50px;
+      font-family: 'Mitr', sans-serif;
+      font-size: 15px;
+    }
+
+    .card {
+      box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+      font-family: 'Mitr', sans-serif;
+      font-size: 15px;
+    }
+   
+
+
+    h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: aliceblue;
+    }
+
+    /* เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่าง */
+    .card-body {
+      padding: 1.5rem;
+    }
+
+
+    /* เพิ่มคลาส "mb-4" เพื่อให้มีระยะห่างด้านล่าง */
+    .mb-4 {
+      margin-bottom: 1rem !important;
+    }
+ 
+ /* CSS */
+        .link-like {
+            cursor: pointer;
+            color: #004C99;
+            text-decoration: none;
+        }
+        
+        .link-like.clicked {
+            text-decoration: underline;
+        }
+
+
+
+    
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Title -->
+    <h3>ตรวจสอบสถานะงาน</h3>
+
+    <!-- Main content -->
+    <div class="row">
+      <!-- Left side -->
+      <div class="col-lg-8 mx-auto">
+        <!-- Status -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <label class="form-label" for="problem_id_Select">เลือกรหัสปัญหา(Select ProblemID)</label>
+            <select class="form-select" id="problem_id_Select"></select>
+            <div style="margin-top:1rem">
+            <label  class="form-label" for="status">สถานะงาน(Status)</label>
+            <input style="color:#009900" type="text" class="form-control"id="status" value="<?= status ?>" readonly placeholder="Status Problem...">
+            </div>
+          </div>
+        </div>
+        <!-- Basic information -->
+    
+        <div  class="card mb-4">
+          <div class="card-body">
+            <input type="text" id="userId" value="<?= userId ?>" style="display:none">
+            <h4 id="showcard" class="h6 mb-4 link-like">ดูเพิ่มเติม(More Status Detail)</h4>
+
+            <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
+            <div class="mb-3">
+             
+            </div>
+            <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
+          <div id="hiddencard">
+            <div  class="mb-3">
+              <label class="form-label"for="request">ปัญหาที่เเจ้ง(Problem)</label>
+              <input type="text" class="form-control"id="request" value="<?= request ?>" readonly placeholder="Problem...">
+            </div>
+            <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
+            <div class="mb-3">
+              <label class="form-label"for="userName">ผู้เเจ้ง(User Name)</label>
+              <input type="name" class="form-control"id="userName" value="<?= userName ?>" readonly placeholder="User Name...">
+            </div>
+            <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
+            <div class="mb-3">
+              <label class="form-label"for="recieveDate">วันที่เเจ้ง(Notified date)</label>
+              <input type="text" class="form-control"id="recieveDate" value="<?= recieveDate ?>" readonly placeholder="Date reported problem...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="location">สถานที่เเจ้ง(Notified location)</label>
+              <input type="text" class="form-control" id="location" value="<?= location ?>" readonly placeholder="Location problem...">
+            </div>
+            <div class="mb-3">
+              <label id="image" class="form-label" for="problemPicture">รูปภาพ(Image)</label>
+              <img id="problemPicture" style="width: 50%; max-height: 50%px;display: block; margin: 0 auto;">
+            </div>
+
+            </div>
+          </div>
+        </div>
+      
+
+        <!-- Notification settings -->
+        
+      </div>
+    </div>
+  </div>
+  <script>
+  
+
+    var problemList = <?= JSON.stringify(problemList) ?>;
+        var pList = JSON.parse(problemList);
+        const optionSelect = document.getElementById("problem_id_Select");
+
+        for (let i = 0; i < pList.length; i++) {
+            const option = document.createElement("option");
+            option.value = pList[i];
+            option.textContent = pList[i];
+            optionSelect.appendChild(option);
+        }
+
+        const requestValue = document.getElementById("request");
+        const recieveDateValue = document.getElementById("recieveDate");
+        const userNameValue = document.getElementById("userName");
+        const locationValue = document.getElementById("location");
+        const problemPictureValue = document.getElementById("problemPicture");
+        const statusValue = document.getElementById("status");
+        google.script.run.withSuccessHandler(displayProblem).findProblem(pList[0])
+        function displayProblem(jsonData) {
+            var getproblemData = JSON.stringify(jsonData)
+            var parsegetproblemData = JSON.parse(getproblemData)
+            var request = parsegetproblemData[0].request
+            requestValue.value = request
+
+            var recieveDate = parsegetproblemData[0].recieveDate
+            recieveDateValue.value = recieveDate
+
+            var location = parsegetproblemData[0].location
+            locationValue.value = location
+
+            var problemPicture = parsegetproblemData[0].problemPicture
+            problemPictureValue.src = problemPicture
+
+            var status = parsegetproblemData[0].status
+            statusValue.value = status
+
+            google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
+            function displayPerson(jsonData) {
+                var getpersonData = JSON.stringify(jsonData)
+                var parsegetpersonData = JSON.parse(getpersonData)
+                var name = parsegetpersonData[0].name
+                userNameValue.value = name
+            }
+        }
+
+        optionSelect.addEventListener("change", function () {
+            problemPictureValue.src = ""
+            const selectedOption = optionSelect.options[optionSelect.selectedIndex];
+            const selectedOroblemId = selectedOption.value;
+            google.script.run.withSuccessHandler(displayProblem).findProblem(selectedOroblemId)
+            function displayProblem(jsonData) {
+                var getproblemData = JSON.stringify(jsonData)
+                var parsegetproblemData = JSON.parse(getproblemData)
+                var request = parsegetproblemData[0].request
+                requestValue.value = request
+
+                var recieveDate = parsegetproblemData[0].recieveDate
+                recieveDateValue.value = recieveDate
+
+                var location = parsegetproblemData[0].location
+                locationValue.value = location
+
+                var problemPicture = parsegetproblemData[0].problemPicture
+                problemPictureValue.src = problemPicture
+
+                var status = parsegetproblemData[0].status
+                statusValue.value = status
+
+                google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
+                function displayPerson(jsonData) {
+                    var getpersonData = JSON.stringify(jsonData)
+                    var parsegetpersonData = JSON.parse(getpersonData)
+                    var name = parsegetpersonData[0].name
+                    userNameValue.value = name
+                }
+            }
+        });
+
+      // สร้างตัวแปรเพื่ออ้างอิงไปยังหัวเรื่อง "รายละเอียดปัญหาที่แจ้ง (Status Detail)"
+const detailHeading = document.querySelector('#showcard');
+
+// สร้างตัวแปรเพื่ออ้างอิงไปยังข้อมูลที่ต้องการซ่อนและแสดง
+const hiddenCard = document.getElementById('hiddencard');
+
+// ตั้งค่าเริ่มต้นให้ข้อมูลซ่อนอยู่
+hiddenCard.style.display = 'none';
+
+// เพิ่มอีเวนต์คลิกบนหัวเรื่อง "รายละเอียดปัญหาที่แจ้ง (Status Detail)"
+detailHeading.addEventListener('click', function () {
+  // เปลี่ยนสไตล์ของ <h3> เมื่อคลิก
+     detailHeading.classList.add('link-like'); // เพิ่มเอฟเฟคเมื่อคลิก
+  // ตรวจสอบสถานะการแสดง/ซ่อนข้อมูล
+  if (hiddenCard.style.display === 'none') {
+    hiddenCard.style.display = 'block'; // แสดงข้อมูลเมื่อคลิก
+  } else {
+    hiddenCard.style.display = 'none'; // ซ่อนข้อมูลเมื่อคลิกอีกครั้ง
+  }
+});
+
+
+ detailHeading.addEventListener('click', function () {
+    detailHeading.classList.add('clicked'); // เพิ่มเอฟเฟกเมื่อคลิก
+      setTimeout(() => {
+                detailHeading.classList.remove('clicked'); // ลบเอฟเฟกเมื่อครบ 1 วินาที
+            }, 80); // 0.08 วินาที
+        });
+
+
+     
+  </script>
+</body>
+
+</html>
