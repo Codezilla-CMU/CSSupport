@@ -91,7 +91,7 @@ To deploy this project
 
 ## 🛠 Skills
 - Programming Language: HTML, JavaScript, CSS
-- Extensive skills/tools: Line OA, MongoDB, Google Sheets
+- Extensive skills/tools: Line OA,Line Developers,MongoDB, Google Sheets
 
 
 ## 🔗 Links
