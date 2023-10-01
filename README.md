@@ -99,9 +99,175 @@ drive-to-web Link: [https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authe
 
 <img style="border-radius: 50%;"  src="https://media.discordapp.net/attachments/1016724036274892822/1157978769471057950/image.png?ex=651a9344&is=651941c4&hm=f20d2749e89705917764f3f7b958e8ae84f64dc35b716dfe17a771a15e6b624b&=&width=1042&height=676" width="300" height="200" /><br>
 
+# Set-Up MongoDB
 
+# Getting Started with MongoDB HTTP Endpoint
 
+## Prerequisites
 
+Before you begin, make sure you have the following prerequisites in place:
+
+1. **MongoDB Atlas Account**: Sign up for or log in to your MongoDB Atlas account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+
+2. **MongoDB Cluster**: Create a MongoDB cluster in your Atlas account if you haven't already.
+
+3. **Database & Collection**: Set up a database name and collection within your MongoDB cluster to store your data.
+
+## Step 1: Access the MongoDB Atlas Dashboard
+
+1. Log in to your MongoDB Atlas account.
+
+2. In the Atlas dashboard, select the project and cluster where you want to enable the HTTP endpoint.
+
+## Step 2: Enable the HTTP Endpoint
+
+1. In the cluster view, click on "Database Access" in the left sidebar.
+
+2. Click the "Add New Database User" button to create a database user with the necessary permissions. Make sure to remember the username and password for this user.
+
+3. Next, click on "Network Access" in the left sidebar and add your current IP address to the IP Whitelist. This allows your current IP to access the cluster.
+
+4. Once the IP is added, go back to the cluster view and click on "Database Access" again. Edit the user you created earlier and assign the appropriate role, such as "Atlas Admin" or "Read and Write to Any Database."
+
+## Step 3: Configure the HTTP Endpoint
+
+1. In the cluster view, click on "Connect" at the top of the screen.
+
+2. Click on the "Connect with MongoDB Compass" button.
+
+3. Follow the instructions to download and install MongoDB Compass, if you haven't already.
+
+4. Open MongoDB Compass and click on "Fill in connection fields individually."
+
+5. Enter the following details:
+   - **Hostname**: Found in the MongoDB Atlas cluster view.
+   - **Port**: 27017
+   - **Authentication**: Select "Username / Password" and enter the database user credentials you created in Step 2.
+
+6. Click "Connect" to establish a connection to your MongoDB cluster.
+
+## Step 4: Access Data via HTTP
+
+1. Once you have connected to your MongoDB cluster using MongoDB Compass, you can access your data via the HTTP endpoint.
+   
+2. To use the code in our project you must to add 9 of method POST HTTP endpoint with following route.
+   
+3. In each route have to enabled on Respond With Result.
+   
+4. In each route have function to link in. It also have to include below code.
+   
+5. In each function setting have to set Authentication to System.
+
+  - /sheet2mongo/insert
+    
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      query = JSON.parse(payload.body.text()).query;
+  
+      return collection.insertOne(query);}
+    ```
+  - /sheet2mongo/insertDate
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      query = JSON.parse(payload.body.text()).query;
+      query.receiveDate = new Date(query.receiveDate);
+    
+      return collection.insertOne(query);}
+    ```
+  - /sheet2mongo/find
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      query = JSON.parse(payload.body.text()).query;
+    
+      return collection.find(query).toArray();}
+    ```
+  - /sheet2mongo/findDate
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      query = JSON.parse(payload.body.text()).query;
+    
+      return collection.find({
+      $and: [
+        { receiveDate: { $gte: new Date(query.sDate) } },
+        { receiveDate: { $lte: new Date(query.eDate) } }
+        ]
+      }).toArray();}
+    ```
+  - /sheet2mongo/updateSet
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      filter = JSON.parse(payload.body.text()).filter;
+      query = JSON.parse(payload.body.text()).query;
+      
+      return collection.updateOne(filter,{$set:query}); }
+    ```
+  - /sheet2mongo/updatePush
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      filter = JSON.parse(payload.body.text()).filter;
+      query = JSON.parse(payload.body.text()).query;
+      
+      return collection.updateOne(filter,{$push:query});}
+    ```
+  - /sheet2mongo/updatePull
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      filter = JSON.parse(payload.body.text()).filter;
+      query = JSON.parse(payload.body.text()).query;
+      
+      return collection.updateOne(filter,{$pull:query});}
+    ```
+  - /sheet2mongo/updateDate
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      filter = JSON.parse(payload.body.text()).filter;
+      query = JSON.parse(payload.body.text()).query;
+      query.finishDate = new Date(query.finishDate);
+      
+      return collection.updateOne(filter,{$set:query});}
+    ```
+  - /sheet2mongo/remove
+
+    ```bash
+      exports = function(payload) {
+      const mongodb = context.services.get('mongodb-atlas');
+      const col = JSON.parse(payload.body.text()).header;
+      const collection = mongodb.db("Your Database Name").collection(col);
+      query = JSON.parse(payload.body.text()).query;
+    
+      return collection.deleteOne(query);}
+    ```
 
 ## 🛠 Skills
 - Programming Language: HTML, JavaScript, CSS
