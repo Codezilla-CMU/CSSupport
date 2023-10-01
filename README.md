@@ -71,7 +71,7 @@ To deploy this project
 ```bash
   RUN/DEPLOY through Google App Script
 ```
-# Set-Up Apps Script
+## Set-Up Apps Script
 
 **Step 1:** Open the Apps Script in Google Workspace and add `Status`, `Repair`, and `Regfixer` to the Apps Script. These files establish connections between Line and MongoDB.
 
@@ -101,7 +101,7 @@ drive-to-web Link: [https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authe
 
 <img style="border-radius: 50%;"  src="https://media.discordapp.net/attachments/1016724036274892822/1157978769471057950/image.png?ex=651a9344&is=651941c4&hm=f20d2749e89705917764f3f7b958e8ae84f64dc35b716dfe17a771a15e6b624b&=&width=1042&height=676" width="300" height="200" /><br>
 
-# Set-Up MongoDB
+## Set-Up MongoDB
 
 ## Getting Started with MongoDB HTTP Endpoint ##
 
