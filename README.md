@@ -115,13 +115,13 @@ Before you begin, make sure you have the following prerequisites in place:
 
 3. **Database & Collection**: Set up a database name and collection within your MongoDB cluster to store your data.
 
-## Step 1: Access the MongoDB Atlas Dashboard ##
+**Step 1:** Access the MongoDB Atlas Dashboard
 
 1. Log in to your MongoDB Atlas account.
 
 2. In the Atlas dashboard, select the project and cluster where you want to enable the HTTP endpoint.
 
-## Step 2: Enable the HTTP Endpoint ##
+**Step 2:** Enable the HTTP Endpoint 
 
 1. In the cluster view, click on "Database Access" in the left sidebar.
 
@@ -131,7 +131,7 @@ Before you begin, make sure you have the following prerequisites in place:
 
 4. Once the IP is added, go back to the cluster view and click on "Database Access" again. Edit the user you created earlier and assign the appropriate role, such as "Atlas Admin" or "Read and Write to Any Database."
 
-## Step 3: Configure the HTTP Endpoint ##
+**Step 3:** Configure the HTTP Endpoint 
 
 1. In the cluster view, click on "Connect" at the top of the screen.
 
@@ -148,7 +148,7 @@ Before you begin, make sure you have the following prerequisites in place:
 
 6. Click "Connect" to establish a connection to your MongoDB cluster.
 
-## Step 4: Access Data via HTTP ##
+**Step 4:** Access Data via HTTP 
 
 1. Once you have connected to your MongoDB cluster using MongoDB Compass, you can access your data via the HTTP endpoint.
    
@@ -160,7 +160,7 @@ Before you begin, make sure you have the following prerequisites in place:
    
 5. In each function setting have to set Authentication to System.
 
-  route /sheet2mongo/insert
+  - /sheet2mongo/insert
     
     ```bash
       exports = function(payload) {
@@ -171,7 +171,7 @@ Before you begin, make sure you have the following prerequisites in place:
   
       return collection.insertOne(query);}
     ```
-  route /sheet2mongo/insertDate
+  - /sheet2mongo/insertDate
 
     ```bash
       exports = function(payload) {
@@ -183,7 +183,7 @@ Before you begin, make sure you have the following prerequisites in place:
     
       return collection.insertOne(query);}
     ```
-  route /sheet2mongo/find
+  - /sheet2mongo/find
 
     ```bash
       exports = function(payload) {
@@ -194,7 +194,7 @@ Before you begin, make sure you have the following prerequisites in place:
     
       return collection.find(query).toArray();}
     ```
-  route /sheet2mongo/findDate
+  - /sheet2mongo/findDate
 
     ```bash
       exports = function(payload) {
@@ -210,7 +210,7 @@ Before you begin, make sure you have the following prerequisites in place:
         ]
       }).toArray();}
     ```
-  route /sheet2mongo/updateSet
+  - /sheet2mongo/updateSet
 
     ```bash
       exports = function(payload) {
@@ -222,7 +222,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$set:query}); }
     ```
-  route /sheet2mongo/updatePush
+  - /sheet2mongo/updatePush
 
     ```bash
       exports = function(payload) {
@@ -234,7 +234,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$push:query});}
     ```
-  route /sheet2mongo/updatePull
+  - /sheet2mongo/updatePull
 
     ```bash
       exports = function(payload) {
@@ -246,7 +246,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$pull:query});}
     ```
-  route /sheet2mongo/updateDate
+  - /sheet2mongo/updateDate
 
     ```bash
       exports = function(payload) {
@@ -259,7 +259,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$set:query});}
     ```
-  route /sheet2mongo/remove
+  - /sheet2mongo/remove
 
     ```bash
       exports = function(payload) {
