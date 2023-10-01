@@ -22,20 +22,6 @@ CS Support is a platform designed to support computer science students by provid
 
 ## Getting Started
 
-### Prerequisites
-
-Before you begin, ensure you have met the following requirements:
-
-- **Window** You need Node.js installed on your system. You can download it from [nodejs.org](https://nodejs.org/).
-- **Linux:** For Linux users, you can install npm through terminal by using
-    ```shell
-    $ sudo apt install npm
-    OR
-    $ sudo apt install npm nodejs
-- To see the version of npm and verify it’s installed on the system:
-    ```shell
-    $ npm --version
-
 ### Installation
 
 1. Clone the repository:
