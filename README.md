@@ -1,7 +1,7 @@
 # CS Support
 CS Support is a platform designed to support computer science students by providing access to resources, facilitating discussions, and fostering collaboration within the community.
 
-<img style="border-radius: 50%;" align="right" src="https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/379390111_634198118838077_4457339973200096694_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=ae9488&_nc_ohc=CVh_2ug9m8IAX-EUWN-&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdQEU0DWd0WwqUwiv-IAA1-Un4ouCIIR5i2moupMNayoGA&oe=6532808B" width="150" height="150" />
+<img style="border-radius: 50%;" align="right" src="[https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/379390111_634198118838077_4457339973200096694_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=ae9488&_nc_ohc=CVh_2ug9m8IAX-EUWN-&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdQEU0DWd0WwqUwiv-IAA1-Un4ouCIIR5i2moupMNayoGA&oe=6532808B](https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/385483987_1302502370638949_2916699704408873712_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=ae9488&_nc_ohc=Aa6C_azaRiwAX8h2yWz&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdTplLZEWjFN_VsNatOjzgY36LCCWPhxtATBFw81QYPX6g&oe=6540A410)" width="150" height="150" />
 
 ## Table of Contents
 
