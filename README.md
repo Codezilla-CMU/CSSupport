@@ -30,12 +30,8 @@ CS Support is a platform designed to support computer science students by provid
    git clone https://github.com/Codezilla-CMU/CSSupport.git
 Don't forget to **extract** the .zip file.
 
-2. Install the project dependencies:
-
-   ```shell
-   npm install
-
-3. For the next step, you need to import the code to **Google App Script**, in order to deploy the code through the server for usage.
+2. For the next step, you need to import the code to **Google App Script**, in order to deploy the code through the server for usage.
+   
 
 ## Usage
 
