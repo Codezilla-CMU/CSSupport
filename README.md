@@ -90,7 +90,7 @@ These files serve to retrieve user information from Line LIFE:
 drive-to-web Link: [https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authed=1](https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authed=1)
 
 To access the websites through Line, use the following links:
-<img style="border-radius: 50%;" align="right" src="[https://scontent.fcnx2-1.fna.fbcdn.net/v/t1.15752-9/385483987_1302502370638949_2916699704408873712_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=ae9488&_nc_ohc=Aa6C_azaRiwAX8h2yWz&_nc_ht=scontent.fcnx2-1.fna&oh=03_AdTplLZEWjFN_VsNatOjzgY36LCCWPhxtATBFw81QYPX6g&oe=6540A410](https://media.discordapp.net/attachments/1016724036274892822/1157971959561343026/image.png?ex=651a8ced&is=65193b6d&hm=a4e0291b0f92a3d47f1accd8313948bbe5a2f5bac553258b72fb8fa3f3bf111c&=&width=1440&height=632)" width="220" height="150" />
+<img style=" align="left" src="https://media.discordapp.net/attachments/1016724036274892822/1157971959561343026/image.png?ex=651a8ced&is=65193b6d&hm=a4e0291b0f92a3d47f1accd8313948bbe5a2f5bac553258b72fb8fa3f3bf111c&=&width=1440&height=632" width="220" height="150" />
 
 
 
