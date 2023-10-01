@@ -69,6 +69,29 @@ To deploy this project
 ```bash
   RUN/DEPLOY through Google App Script
 ```
+# Set-Up Apps Script
+
+**Step 1:** Open the Apps Script in Google Workspace and add `Status`, `Repair`, and `Regfixer` to the Apps Script. These files establish connections between Line and MongoDB.
+
+- `Status` is used to display the status of users and fixers.
+- `Repair` is used for user repair requests.
+- `Regfixer` is used for registering or adding repair technicians.
+
+**Step 2:** Add Files - `status.html`, `regfixer.html`, `repair.html`
+
+These files serve to retrieve user information from Line LIFE:
+
+- `status.html` is used to link to the Status page on Line.
+- `regfixer.html` is used to link to the Repair page on Line.
+- `repair.html` is used to link to the Regfixer page on Line.
+
+**Step 3:** Use "drive-to-web" to create an HTML link and paste it into Line LIFE for accessing websites through Line.
+
+drive-to-web Link: [https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authed=1](https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authed=1)
+https://media.discordapp.net/attachments/1016724036274892822/1157971959561343026/image.png?ex=651a8ced&is=65193b6d&hm=a4e0291b0f92a3d47f1accd8313948bbe5a2f5bac553258b72fb8fa3f3bf111c&=&width=1440&height=632
+
+
+
 
 
 ## 🛠 Skills
