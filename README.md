@@ -288,11 +288,5 @@ Before you begin, make sure you have the following prerequisites in place:
 - [@nonnychan](https://www.github.com/nonnychan)
 
 
-## Badges
-
-Add badges from somewhere like: [shields.io](https://shields.io/)
-
-![NPM](https://img.shields.io/npm/l/sweetalert)
-![GitHub](https://img.shields.io/github/license/Codezilla-CMU/CSSupport)
 
 
