@@ -7,10 +7,17 @@ function findMongo(date) {
     payload : JSON.stringify( { header : 'Problem' , query : { sDate : sDate , eDate : eDate } })
   }
   const findRes = UrlFetchApp.fetch(Endpoint+"/findDate", findOpt);
-  Logger.log(findRes.getContentText());
+  // Logger.log(findRes.getContentText());
   const plist = JSON.parse(findRes.getContentText());
+  clearDashboard();
   addToolType(plist);
   return plist.length;
+}
+
+function clearDashboard() {
+  var dbSheet = sheet.getSheetByName("Dashboard");
+  var range = dbSheet.getRange("J15:AB33");
+  range.clear();
 }
 
 function clearSheet(collection) {
@@ -36,7 +43,7 @@ function updateProblemSheet(id,value,rows) {
       newValue.request,
       newValue.location,
       newValue.problemPicture,
-      new Date(newValue.recieveDate),
+      new Date(newValue.receiveDate),
       newValue.finishDate,
       newValue.fixer,
       newValue.totalPrice
@@ -107,6 +114,17 @@ function toolSupplySheet() {
       payload : JSON.stringify(jsonObject)
     }
     const res = UrlFetchApp.fetch(Endpoint+"/updateSet", jopt);
+    const checkdup = JSON.parse(res.getContentText()).matchedCount
+    Logger.log(checkdup);
+
+    if (checkdup == 0) {
+      const newtoolopt = {
+        method : 'post',
+        payload : JSON.stringify(jsonObject)
+      }
+      const ntres = UrlFetchApp.fetch(Endpoint+"/insert", newtoolopt);
+      Logger.log(ntres.getResponseCode());
+    }
   }
   
   clearSheet("Tool");
@@ -173,8 +191,8 @@ function personSheet() {
     personSheet.appendRow([
       item._id,
       item.name,
-      item.role,
       item.tel,
+      item.role,
       item.profilePicture
     ]);
   }
@@ -252,7 +270,7 @@ function problemSheet() {
       item.request,
       item.location,
       item.problemPicture,
-      new Date(item.recieveDate),
+      new Date(item.receiveDate),
       item.finishDate,
       item.fixer,
       item.totalPrice
@@ -261,11 +279,23 @@ function problemSheet() {
 }
 
 function addToolType(data) {
-    clearSheet("Query");
     data.forEach(function (item) {
       findToolTypes(item.tools)
     });
 }
+
+function findFirstEmptyRowInColumn(range, column) {
+  var values = range.getValues();
+  for (var i = 0; i < values.length; i++) {
+    if (values[i][0] === "") {
+      return i + range.getRow();
+    }
+  }
+  return -1; // Return -1 if no empty row is found
+}
+
+
+
 
 function findToolTypes(idlist) {
   idlist.forEach(function (id) {
@@ -274,28 +304,39 @@ function findToolTypes(idlist) {
     payload: JSON.stringify({ header: 'ToolFix', query: { _id: id } })
     }
     const findRes = UrlFetchApp.fetch(Endpoint + "/find", findOpt);
-    Logger.log(findRes.getContentText());
+    // Logger.log(findRes.getContentText());
     const data = JSON.parse(findRes.getContentText());
-
-    if (data[0].type == "ไฟฟ้า") {
-      var scol = 6; 
-      var range = "F2:F";
-    } else if (data[0].type == "ประปา") {
-      var scol = 11; 
-      var range = "K2:K";
-    } else if (data[0].type == "ทั่วไป") {
-      var scol = 16; 
-      var range = "P2:P";
-    } else {
-      var scol = 21; 
-      var range = "U2:U";
+    Logger.log(data)
+    if (data.length > 0) {
+      if (data[0].type == "ไฟฟ้า") {
+        var scol = 10; 
+        var range = "J15:J33";
+      } else if (data[0].type == "ไอที") {
+        var scol = 25; 
+        var range = "Y15:Y33";
+      } else if (data[0].type == "ประปา") {
+        var scol = 15; 
+        var range = "O15:O33";        
+      } else {
+        var scol = 20; 
+        var range = "T15:T33";
+      }
+    } else { 
+      return 0;
     }
 
-    var querySheet = sheet.getSheetByName("Query");
-    var avals = querySheet.getRange(range).getValues();
-    var startRow = avals.filter(String).length + 2;
-
-    // Assuming the data is an array of objects
+    var querySheet = sheet.getSheetByName("Dashboard");
+    var r = querySheet.getRange(range);
+    var startRow = findFirstEmptyRowInColumn(r, range.charAt(0));
+    Logger.log(startRow)
+  
+    if (startRow === -1) {
+      // The range is full, handle this case (e.g., display an error message)
+      Logger.log("range is full.");
+      return;
+    }  
+  
+    
     data.forEach(function (item) {
       var matchingRows = querySheet.getRange(range).createTextFinder(item.name).findAll();
       if (matchingRows.length > 0) {
@@ -317,5 +358,6 @@ function findToolTypes(idlist) {
       }
     });
   });
+  return 1;
   
 }

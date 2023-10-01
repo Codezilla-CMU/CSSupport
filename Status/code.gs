@@ -7,11 +7,11 @@ var status = null;
 var request = null;
 var location = null;
 var problemPicture = null;
-var recieveDate = null;
+var receiveDate = null;
 var problemList = null;
 
 function doGet(e) {
-  //userId = "Ua710c1847a661789b0d3a7b8f6d82727";
+  // userId = "U9d2bbec5c40e6a3278f0f077b02c4c2e"
   userId = e.parameter.userId;
   displayName = e.parameter.displayName;
   pictureUrl = e.parameter.pictureUrl;
@@ -28,6 +28,10 @@ function doGet(e) {
         if (problem_id.length > 0) {
           Logger.log("problem_id.length = " + problem_id.length)
           var template = HtmlService.createTemplateFromFile("admin");
+
+          var problemLenght = problem_id.length
+          template.problemLenght = problemLenght;
+
           var tool_list1 = findToolType('ไฟฟ้า');
           template.tool_list1 = tool_list1;
 
@@ -68,10 +72,10 @@ function doGet(e) {
                 .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
             }
           } catch (f){
-            Logger.log(f.toString() + "User")
-            var template = HtmlService.createTemplateFromFile("idleUser");
+            Logger.log(f.toString() + "Admin")
+            var template = HtmlService.createTemplateFromFile("idleAdmin");
             return template.evaluate()
-              .setTitle("Idle User Dashboard")
+              .setTitle("Idle Admin Dashboard")
               .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
               .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
           }
@@ -93,5 +97,10 @@ function doGet(e) {
     }
   } catch (error) {
     Logger.log(error.toString())
+    var template = HtmlService.createTemplateFromFile("idleUser");
+      return template.evaluate()
+        .setTitle("Idle User Dashboard")
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 }

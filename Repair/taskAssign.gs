@@ -1,5 +1,5 @@
 
-function assignProblemToFixer(problemId) {
+function assignProblemToFixer(problemId,uname) {
   let fixerName = '';
 
   // Get available fixers
@@ -13,7 +13,7 @@ function assignProblemToFixer(problemId) {
         const assignedFixer = fixers[0];
         const fixerName = assignedFixer.name;
         const fixerId = assignedFixer._id;
-        updateProblemStatusAndFixer(problemId, fixerId,fixerName);
+        updateProblemStatusAndFixer(problemId, fixerId,fixerName,uname);
         return fixerName;
          
       } else {
@@ -34,6 +34,7 @@ function getAvailableFixers() {
   };
 
   const response = UrlFetchApp.fetch(mongodbUri + "/find" , options);
+  // Logger.log(response.getContentText())
 
   if (response.getResponseCode() === 200) {
     const data = JSON.parse(response.getContentText());
@@ -46,7 +47,7 @@ function getAvailableFixers() {
 }
 
 // Function to update problem status and fixer
-function updateProblemStatusAndFixer(problemId, fixerId, fixerName) {
+function updateProblemStatusAndFixer(problemId, fixerId, fixerName,uname) {
   const problemOpt = {
     method: "post",
     payload: JSON.stringify({header : "Problem" ,filter : {_id : problemId} , query : { fixer : fixerName }})
@@ -59,7 +60,7 @@ function updateProblemStatusAndFixer(problemId, fixerId, fixerName) {
 
   const responseProblem = UrlFetchApp.fetch(mongodbUri + "/updateSet", problemOpt);
   const responseFixer = UrlFetchApp.fetch(mongodbUri + "/updatePush", fixerOpt);
-  sendFlexFixer(problemId, fixerId)
+  sendFlexFixer(problemId, fixerId,uname)
   updateProblemSheet(problemId,fixerName,9);
   if (responseProblem.getResponseCode() === 200) {
     console.log(`Problem ${problemId} assigned to Fixer ${fixerName} `);
@@ -73,10 +74,7 @@ function updateProblemStatusAndFixer(problemId, fixerId, fixerName) {
   }
 }
 
-function sendFlexFixer(problemId, fixerId) {
-  //problemId = "15de713c-68c0-4b7f-bd2c-f16d7d20f30f"
-  //fixerId = "U9d2bbec5c40e6a3278f0f077b02c4c2fff3"
-
+function sendFlexFixer(problemId, fixerId,uname) {
   const findProblemOpt = {
     method : 'post',
     payload : JSON.stringify({ header : "Problem" ,query :{ _id: problemId} })
@@ -84,15 +82,10 @@ function sendFlexFixer(problemId, fixerId) {
   const problemRes = UrlFetchApp.fetch(Endpoint+"/find", findProblemOpt);
   const pres = JSON.parse(problemRes.getContentText());
 
-  const findPersonOpt = {
-    method : 'post',
-    payload : JSON.stringify({ header : "Person" ,query :{ _id: pres[0].owner} })
-  }
-  const personRes = UrlFetchApp.fetch(Endpoint+"/find", findPersonOpt);
-  const displayName = JSON.parse(personRes.getContentText())[0].name
-  pres[0].recieveDate = formatThaiDateTime(new Date(pres[0].recieveDate));
+  const displayName = uname;
+  pres[0].receiveDate = formatThaiDateTime(new Date(pres[0].receiveDate));
 
-  var flex = createFlexMessageFixer(displayName, pres[0].request, pres[0].location, pres[0].recieveDate
+  var flex = createFlexMessageFixer(displayName, pres[0].request, pres[0].location, pres[0].receiveDate
   , pres[0].problemPicture, problemId, pres[0].status);
   sendFlexMessage(flex, fixerId, problemId);
 }

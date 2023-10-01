@@ -56,7 +56,33 @@
             text-decoration: underline;
         }
 
+.cancel_req {
+      background-color: #df1130;
+      /* สีพื้นหลังของปุ่ม */
+      color: #fff;
+      /* สีตัวอักษร */
+      border: none;
+      /* ไม่มีเส้นขอบ */
+      
+      /* ขนาดของปุ่ม */
+      border-radius: 4px;
+      /* มุมขอบ */
+      cursor: pointer;
+      /* สัญลักษณ์เมาส์เป็นเครื่องมือ (cursor) */
+      display: flex;
+      justify-content: center; 
+      align-items: center; 
+      
+      width: 140px; /* Adjust the width as needed */
+      height: 40px; /* Adjust the height as needed */
+    }
 
+    /* เมื่อเมาส์ชี้ไปที่ปุ่มสีเขียว */
+    .cancel_req:hover {
+       background-color: #cd1934;
+      /* สีพื้นหลังเมื่อเมาส์ชี้ไปที่ปุ่ม */
+    }
+    /* CSS */
 
     
   </style>
@@ -101,13 +127,13 @@
             </div>
             <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
             <div class="mb-3">
-              <label class="form-label"for="userName">ผู้เเจ้ง(User Name)</label>
-              <input type="name" class="form-control"id="userName" value="<?= userName ?>" readonly placeholder="User Name...">
+              <label class="form-label"for="userName">ผู้ซ่อม(Fixer Name)</label>
+              <input type="name" class="form-control"id="userName" value="<?= userName ?>" readonly placeholder="Fixer Name...">
             </div>
             <!-- เพิ่มคลาส "mb-3" เพื่อให้มีระยะห่างด้านล่างของข้อมูล -->
             <div class="mb-3">
-              <label class="form-label"for="recieveDate">วันที่เเจ้ง(Notified date)</label>
-              <input type="text" class="form-control"id="recieveDate" value="<?= recieveDate ?>" readonly placeholder="Date reported problem...">
+              <label class="form-label"for="receiveDate">วันที่เเจ้ง(Notified date)</label>
+              <input type="text" class="form-control"id="receiveDate" value="<?= receiveDate ?>" readonly placeholder="Date reported problem...">
             </div>
             <div class="mb-3">
               <label class="form-label" for="location">สถานที่เเจ้ง(Notified location)</label>
@@ -120,7 +146,15 @@
 
             </div>
           </div>
+
         </div>
+       <div  class="card mb-4" id="cancel_card" style="display:none;">
+          <div class="card-body" style="align-items:center;">
+        <button  class="cancel_req"id="cancel_req" >Cancel request</button>
+        <p style="margin-top: 7px;">(Whenever you need to cancel the issue you've reported.)</p>
+      </div></div>
+
+
       
 
         <!-- Notification settings -->
@@ -128,8 +162,53 @@
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <script>
-  
+
+    const cancelButton = document.getElementById("cancel_req");
+
+    cancelButton.addEventListener("click", function () {
+        const uid = document.getElementById("userId").value;
+        const pid = optionSelect.options[optionSelect.selectedIndex].value;
+
+        // Use SweetAlert for confirmation
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to cancel your report? id : "+pid,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, cancel it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+            // User clicked the "Yes, cancel it!" button
+            google.script.run.removeProblem(pid, uid);
+            Swal.fire({
+                title: "Cancelled!",
+                text: "Your cancellation request has been submitted.",
+                icon: "success",
+                timer: 850, // Delay in milliseconds (2 seconds in this example)
+                showConfirmButton: false, // Hide the "OK" button
+            }).then(() => {
+                window.top.close();
+            });
+        }
+        });
+    });
+
+
+    function toggleCancelRequestButton(status) {
+        const cancelButton = document.getElementById("cancel_card");
+        const statusZ = statusValue.value;
+        console.log("cancel btn")
+        
+        if (statusZ === "Received") {
+            cancelButton.style.display = "block"; // Display the button
+        } else {
+            cancelButton.style.display = "none"; // Hide the button
+        }
+    }  
 
     var problemList = <?= JSON.stringify(problemList) ?>;
         var pList = JSON.parse(problemList);
@@ -143,11 +222,16 @@
         }
 
         const requestValue = document.getElementById("request");
-        const recieveDateValue = document.getElementById("recieveDate");
+        const receiveDateValue = document.getElementById("receiveDate");
         const userNameValue = document.getElementById("userName");
         const locationValue = document.getElementById("location");
         const problemPictureValue = document.getElementById("problemPicture");
         const statusValue = document.getElementById("status");
+
+        // Add an event listener to the statusValue input to update the button visibility when the status changes
+        // statusValue.addEventListener("change", toggleCancelRequestButton);
+
+        console.log('pList[0] = ' + pList[0])
         google.script.run.withSuccessHandler(displayProblem).findProblem(pList[0])
         function displayProblem(jsonData) {
             var getproblemData = JSON.stringify(jsonData)
@@ -155,8 +239,8 @@
             var request = parsegetproblemData[0].request
             requestValue.value = request
 
-            var recieveDate = parsegetproblemData[0].recieveDate
-            recieveDateValue.value = recieveDate
+            var receiveDate = parsegetproblemData[0].receiveDate
+            receiveDateValue.value = receiveDate
 
             var location = parsegetproblemData[0].location
             locationValue.value = location
@@ -167,13 +251,19 @@
             var status = parsegetproblemData[0].status
             statusValue.value = status
 
-            google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
-            function displayPerson(jsonData) {
-                var getpersonData = JSON.stringify(jsonData)
-                var parsegetpersonData = JSON.parse(getpersonData)
-                var name = parsegetpersonData[0].name
-                userNameValue.value = name
-            }
+            var fixerName = parsegetproblemData[0].fixer
+            userNameValue.value = fixerName
+
+            var problem_id = parsegetproblemData[0]._id
+            toggleCancelRequestButton(status)
+
+            // google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
+            // function displayPerson(jsonData) {
+            //     var getpersonData = JSON.stringify(jsonData)
+            //     var parsegetpersonData = JSON.parse(getpersonData)
+            //     var name = parsegetpersonData[0].name
+            //     userNameValue.value = name
+            // }
         }
 
         optionSelect.addEventListener("change", function () {
@@ -187,8 +277,8 @@
                 var request = parsegetproblemData[0].request
                 requestValue.value = request
 
-                var recieveDate = parsegetproblemData[0].recieveDate
-                recieveDateValue.value = recieveDate
+                var receiveDate = parsegetproblemData[0].receiveDate
+                receiveDateValue.value = receiveDate
 
                 var location = parsegetproblemData[0].location
                 locationValue.value = location
@@ -199,13 +289,19 @@
                 var status = parsegetproblemData[0].status
                 statusValue.value = status
 
-                google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
-                function displayPerson(jsonData) {
-                    var getpersonData = JSON.stringify(jsonData)
-                    var parsegetpersonData = JSON.parse(getpersonData)
-                    var name = parsegetpersonData[0].name
-                    userNameValue.value = name
-                }
+                var fixerName = parsegetproblemData[0].fixer
+                userNameValue.value = fixerName
+
+                var problem_id = parsegetproblemData[0]._id
+                toggleCancelRequestButton(status)
+
+                // google.script.run.withSuccessHandler(displayPerson).findPerson(parsegetproblemData[0].owner)
+                // function displayPerson(jsonData) {
+                //     var getpersonData = JSON.stringify(jsonData)
+                //     var parsegetpersonData = JSON.parse(getpersonData)
+                //     var name = parsegetpersonData[0].name
+                //     userNameValue.value = name
+                // }
             }
         });
 

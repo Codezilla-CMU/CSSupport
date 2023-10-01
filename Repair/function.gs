@@ -1,195 +1,469 @@
-const mongodbUri = "https://ap-southeast-1.aws.data.mongodb-api.com/app/application-0-nktdb/endpoint/sheet2mongo";
-function hideColumns() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var selectedRange = sheet.getActiveRange();
-  var column = selectedRange.getColumn();
-  var numColumns = selectedRange.getNumColumns();
+const token = "3udqr+wV8h1PDGWXxSidXxtGaQa7a+C9xLt6OIG3bkN+prZ8KAd81h/Km+RC35lN/gXWsmI+QhmOzLxc1XXPbrWFW7GIw12xgPT7NTJlflHjjnrPq7qNuHawQrKv6uTJwapsKKvxt0HVqsxj7lZWygdB04t89/1O/w1cDnyilFU="; // แทน YOUR_ACCESS_TOKEN_HERE ด้วย Access Token ของคุณจาก LINE Channel Developer Console
+// สร้าง Flex Message
+function createFlexMessage(fixerName, request, location, recDate, image, problemId, status) {
+  // สร้างข้อความ Flex Message ของคุณ
+  var flexMessage = {
+    type: "flex",
+    altText: "ข้อมูลแจ้งซ่อม", // ข้อความสำหรับผู้ใช้เมื่อไม่สามารถแสดง Flex Message ได้
+    contents: {
+      type: "bubble",
+      hero: {
+        type: "image",
+        url: image, // URL ของรูปภาพที่คุณต้องการแสดง
+        size: "full",
+        aspectMode: "cover",
+        aspectRatio: "20:13",
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "md",
+        "contents": [
+          {
+            "type": "text",
+            "text": "Reported Problems (detail)",
+            "wrap": true,
+            "weight": "bold",
+            "align": "center",
+            "size": "lg",
+            "color": "#000000"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "margin": "lg",
+            "spacing": "sm",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Problem :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",
+                   
+                    "wrap": true,
+                    "position": "absolute"
 
-  sheet.hideColumns(column, numColumns);
-}
+                   
 
-function showColumns() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var selectedRange = sheet.getActiveRange();
-  var column = selectedRange.getColumn();
-  var numColumns = selectedRange.getNumColumns();
+                  },
+                  {
+                    "type": "text",
+                    "text": request,
+                    "wrap": true,
+                    "size": "sm",
+                    "color": "#4169E1",
+                    "flex": 4,
+                    "position": "relative",
+                    "align": "end",                  
+                    "weight": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Status :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",
+                    "wrap": true,
+                    "position": "absolute"
+ 
+                  },
+                  {
+                    "type": "text",
+                    "text": status,
+                    "wrap": true,
+                    "color": "#4169E1",
+                    "size": "sm",
+                    "flex": 4,   
+                    "position": "relative",             
+                    "align": "end",
+                    "weight": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Fixer :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",
+                    "wrap": true,
+                    "position": "absolute"
+ 
+                  },
+                  {
+                    "type": "text",
+                    "text": fixerName,
+                    "wrap": true,
+                    "color": "#4169E1",
+                    "size": "sm",
+                    "flex": 4,
+                    "weight": "bold",
+                    "position": "relative",       
+                    "align": "end",
+                   
 
-  sheet.showColumns(column, numColumns);
-}
+                  }
+                ]
+              },
 
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Admin option')
-    // .addItem('Find Data', 'findData')
-    .addItem('Update MongoDB', 'updateMongo')
-    .addItem('Hide Selected Columns', 'hideColumns')
-    .addItem('Show Selected Columns', 'showColumns')
-    .addToUi();
-}
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Location :",
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#000000",
+                    "weight": "bold",
+                    "wrap": true,
+                    "position": "absolute"
 
-function updateMongo() {
-  problemSheet();
-  personSheet();
-  toolSupplySheet();
-}
-
-// [["20xx-01-01"],["20xx-01-31"]]
-function findData() {
-  var ui = SpreadsheetApp.getUi();
-  var prompt1 = ui.prompt(
-    'Find Data',
-    'Enter Start Date (YYYY-MM-DD):',
-    ui.ButtonSet.OK_CANCEL
-  );
-
-  if (prompt1.getSelectedButton() === ui.Button.OK) {
-    var inputText1 = prompt1.getResponseText();
-    if (inputText1 === '') {
-      ui.alert('Invalid input. Please provide YYYY-MM-DD');
-      return;
-    }
-  } else {
-    return;
-  }
-
-  var prompt2 = ui.prompt(
-    'Find Data',
-    'Enter End Date (YYYY-MM-DD):',
-    ui.ButtonSet.OK_CANCEL
-  );
-
-  if (prompt2.getSelectedButton() === ui.Button.OK) {
-    var inputText2 = prompt2.getResponseText();
-    if (inputText2 === '') {
-      ui.alert('Invalid input. Please provide YYYY-MM-DD');
-      return;
-    }
-    var date = []
-    date[0] = inputText1
-    date[1] = inputText2
-
-    ui.alert('Fixer Data Inserted Successfully!' + ' ' + date[0] + ' '+ date[1]);
-  } else {
-    return;
-  }
-}
-
-
-
-/*function recieveDate_googlesheet() {
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var dashboardSheet = spreadsheet.getSheetByName("Dashboard"); // ระบุชื่อตาราง "Dashboard"
-
-  if (dashboardSheet) {
-    var startDateCell = dashboardSheet.getRange(1, 3); // แถวที่ 1, คอลัมน์ที่ 3 (C)
-
-    var startDateValue = startDateCell.getValue();
-    var yearMonth = startDateValue.split("-"); // แยกปีและเดือน
-    var year = Number(yearMonth[0]);
-    var month = Number(yearMonth[1]);
-
-    // สร้างวันแรกของเดือน
-    var startDate = new Date(year, month - 1, 1); 
-
-    // สร้างวันสุดท้ายของเดือน
-    var endDate = new Date(year, month, 0); 
-
-    // แปลงวันที่ให้อยู่ในโซนเวลาของประเทศไทย
-    var timeZone = "Asia/Bangkok";
-    var startDateStr = Utilities.formatDate(startDate, timeZone, "yyyy-MM-dd");
-    var endDateStr = Utilities.formatDate(endDate, timeZone, "yyyy-MM-dd");
-
-    // console.log("startDateStr : " + startDateStr );
-    // console.log("endDateStr : " + endDateStr );
-
-    var dataToSend = [[startDateStr], [endDateStr]];
-    console.log("Date: " + dataToSend);
-    
-    
-  } else {
-    console.log("Dashboard sheet not found.");
-  }
-
-
-  //findMongo(dataToSend)
-}
-
-function onEdit(e) {
-  var range = e.range;
-  var sheet = range.getSheet();
+     
+                  },
+                  {
+                    "type": "text",
+                    "text": location,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#4169E1",
+                    "weight": "bold", 
+                    "position": "relative",      
+                    "align": "end",
+                    "wrap": true,
+                    
+                  }
+                ],
+                "spacing": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "Notified date :",
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#000000",
+                    "weight": "bold",
+                    "wrap": true,
+                    "position": "absolute"
   
-  // ตรวจสอบว่าคลิกที่แผ่นงาน "Dashboard" เท่านั้น
-  if (sheet.getName() === "Dashboard") {
-    // ตรวจสอบเซลล์ที่ถูกคลิกว่าเป็นเซลล์ที่คุณต้องการ
-    if (range.getA1Notation() === "C1") {
-      // เรียกใช้ฟังก์ชัน recieveDate_googlesheet อัตโนมัติ
-      recieveDate_googlesheet();
-    }
-  }
-}
-*/
-function createDeleteButton() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
+                  },
+                  {
+                    "type": "text",
+                    "text": recDate,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#4169E1",
+                    "weight": "bold",
+                   
+                    "position": "relative", 
+                    "wrap": true,  
+                    "align": "end",      
+                   
+                  }
+                ],
+                "spacing": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "ProblemID : " ,
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#b22222",
+                    "weight": "bold",   
+                    "wrap": true,
+                    "position": "absolute"                                                
+                  },
+                  {
+                    "type": "text",
+                    "text":  problemId,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#b22222",
+                    "weight": "bold",
+                   
+                    "position": "relative", 
+                    "wrap": true,  
+                    "align": "end",
+    
+                  }
+                ],
+                "spacing": "sm"
+              },
+            ]
+          }
+        ],
+      },
+    },
+  };
 
-  for (var i = 0; i < data.length; i++) {
-    if (data[i][3] === "Fixer") {
-      var button = sheet.getRange(i + 1, 6).setValue("Delete");
-      var buttonId = button.getSheet().getSheetId() + i;
-      var script = `
-        (function() {
-          google.script.run.withSuccessHandler(function() {
-            google.script.host.close();
-          }).deleteFixer("${buttonId}");
-        })();
-      `;
-
-      sheet.getRange(i + 1, 6).setFormulaR1C1(`=HYPERLINK("#gid=${buttonId}", "Delete")`);
-      sheet.getRange(i + 1, 6).setNote(`Click to delete Fixer`);
-    }
-  }
-}
-
-function deleteFixer(buttonId) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("DeleteButtons");
-  var row = sheet.getRange(sheet.getRange(1, 1, sheet.getLastRow(), 1).createTextFinder(buttonId).matchEntireCell(true).findNext()).getRow();
-  var dataSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var rowToDelete = row;
-  var buttonCell = dataSheet.getRange(row, 6);
-  buttonCell.clearContent();
-  dataSheet.deleteRow(rowToDelete);
-
-  // ทำการลบข้อมูล Fixer ใน MongoDB ด้วยโค้ดที่เหมาะสมที่นี่
-  // เช่น, ใช้ MongoDB API หรือวิธีอื่น ๆ ตามความเหมาะสม
-
-  // เมื่อลบข้อมูลเสร็จสิ้น อาจจะให้แสดงข้อความหรือส่งค่ากลับไปยังผู้ใช้ได้ตามที่คุณต้องการ
-}
-
-function installTrigger() {
-  var triggers = ScriptApp.getProjectTriggers();
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-
-  // ตรวจสอบว่า Trigger สำหรับ createDeleteButton ยังไม่ถูกสร้าง
-  var triggerExists = false;
-  for (var i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === "createDeleteButton") {
-      triggerExists = true;
-      break;
-    }
-  }
-
-  // ถ้า Trigger ยังไม่ถูกสร้าง ให้สร้าง Trigger เพื่อเรียกใช้ createDeleteButton
-  if (!triggerExists) {
-    ScriptApp.newTrigger("createDeleteButton")
-      .forSpreadsheet(sheet)
-      .onOpen()
-      .create();
-  }
+  return flexMessage;
 }
 
-// เรียกใช้ installTrigger เพื่อติดตั้ง Trigger เมื่อเปิดหน้า Google Sheets ครั้งแรก
-installTrigger();
+function createFlexMessageFixer(displayName, request, location, recDate, image, problemId, status) {
+  // สร้างข้อความ Flex Message ของคุณ
+  var flexMessage = {
+    type: "flex",
+    altText: "ข้อมูลแจ้งซ่อม", // ข้อความสำหรับผู้ใช้เมื่อไม่สามารถแสดง Flex Message ได้
+    contents: {
+      type: "bubble",
+      hero: {
+        type: "image",
+        url: image, // URL ของรูปภาพที่คุณต้องการแสดง
+        size: "full",
+        aspectMode: "cover",
+        aspectRatio: "20:13",
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "md",
+        "contents": [
+          {
+            "type": "text",
+            "text": "เเจ้งซ่อม (รายละเอียด)",
+            "weight": "bold",
+            "size": "lg",
+            "color": "#000000"
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "margin": "lg",
+            "spacing": "sm",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "เรื่องที่แจ้ง :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",  
+                    "wrap": true,
+                    "position": "absolute"
+                                 
+                  },
+                  {
+                    "type": "text",
+                    "text": request,
+                    "wrap": true,
+                    "size": "sm",
+                    "color": "#228B22",
+                    "flex": 4,    
+                    "position": "relative",            
+                    "align": "end",
+                    "weight": "bold"
+                    
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "สถานะ :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",  
+                    "wrap": true,
+                    "position": "absolute"                               
+                  },
+                  {
+                    "type": "text",
+                    "text": status,
+                    "wrap": true,
+                    "color": "#228B22",
+                    "size": "sm",
+                    "flex": 4, 
+                    "position": "relative",   
+                    "align": "end",
+                    "weight": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "คนเเจ้ง :",
+                    "color": "#000000",
+                    "size": "sm",
+                    "flex": 1,
+                    "weight": "bold",   
+                    "wrap": true,
+                    "position": "absolute"                                                      
+                  },
+                  {
+                    "type": "text",
+                    "text": displayName,                   
+                    "color": "#228B22",
+                    "size": "sm",
+                    "flex": 4,
+                    "weight": "bold",
+                    "position": "relative",   
+                    "align": "end",
+                    "wrap": true,
+                   
 
+                  }
+                ]
+              },
 
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "สถานที่เเจ้ง :",
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#000000",
+                    "weight": "bold", 
+                    "wrap": true,
+                    "position": "absolute"                        
+                  },
+                  {
+                    "type": "text",
+                    "text": location,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#228B22",
+                    "weight": "bold",
+                    "position": "relative",                     
+                    "align": "end",
+                    "wrap": true,
+                    
+                  }
+                ],
+                "spacing": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "วันที่เเจ้ง :",
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#000000",
+                    "weight": "bold", 
+                    "wrap": true,
+                    "position": "absolute"                                          
+                  },
+                  {
+                    "type": "text",
+                    "text": recDate,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#228B22",
+                    "weight": "bold",
+                    "position": "relative",                          
+                    "align": "end",
+                    "wrap": true,
+                    
+                  }
+                ],
+                "spacing": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "หมายเลขปัญหา : ",
+                    "flex": 1,
+                    "size": "sm",
+                    "color": "#b22222",
+                    "weight": "bold",                  
+                    "align": "start",
+                    "wrap": true,
+                    "position": "absolute"
+                 
+                  },
+                   {
+                    "type": "text",
+                    "text":  problemId,
+                    "flex": 4,
+                    "size": "sm",
+                    "color": "#b22222",
+                    "weight": "bold",
+                   
+                    "position": "relative", 
+                    "wrap": true,  
+                    "align": "end",
+                   
+                   
+                   
+                  }
+                ],
+                "spacing": "sm"
+              },
+            ]
+          }
+        ],
+      },
+    },
+  };
 
+  return flexMessage;
+}
 
+function sendFlexMessage(flexMessage, userId, problemId) {
+  
+  var options = {
+    method: "post",
+    payload: JSON.stringify({
+      to: userId,
+      messages: [flexMessage],
+      problemId: problemId,
+    }),
+    headers: { Authorization: "Bearer " + token },
+    contentType: "application/json",
+  };
+
+  UrlFetchApp.fetch("https://api.line.me/v2/bot/message/push", options);
+}

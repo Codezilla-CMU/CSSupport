@@ -91,7 +91,7 @@ function checkDup(doc) {
   Logger.log(doc)
   const checkDupOpt = {
     method: 'post',
-    payload: JSON.stringify({ header: 'Person', query: { _id: doc.userID } })
+    payload: JSON.stringify({ header: 'Person', query: { _id: doc._id } })
   }
 
   const checkRes = UrlFetchApp.fetch(mongodbUri + "/find", checkDupOpt);
@@ -107,6 +107,4 @@ function checkDup(doc) {
   } catch {
     return "2"
   }
-  
-  
 }

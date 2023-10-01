@@ -5,71 +5,27 @@ const spreadsheetId = '11ONVfN8YD_aBVflke-fUP-aYdY38z6zuUvlkaS_ZWKw';
 //function to insert the client(whose that report the problem) info to mongoDB
 function insert2mongo(userId, displayName, pictureUrl, requests, locations, image) {
   const pid = generateShortMd5Hash();
-  const problemDoc = {}
-  problemDoc._id = pid
-  problemDoc.owner = userId
-  problemDoc.location = locations
-  problemDoc.request = requests
-  problemDoc.problemPicture = image
-  problemDoc.status = "Recieved"
-  problemDoc.recieveDate = new Date()
-  problemDoc.finishDate = ""
-  problemDoc.fixer = ""
-  problemDoc.tools = null
-  const problemOpt = {
-    header : 'Problem',
-  'contentType': 'application/json',
-  method: 'post',
-  payload : JSON.stringify({header : 'Problem' , query : problemDoc})
-  };
+  const problemDoc = { _id:pid , owner:userId , location:locations , request:requests , problemPicture:image , status:"Received" , receiveDate:new Date() , finishDate:"" , fixer:"" , tools : []}
+  const problemOpt = {method: 'post', payload : JSON.stringify({header : 'Problem' , query : problemDoc}) };
   const problemRes = UrlFetchApp.fetch(Endpoint+"/insertDate", problemOpt);
   updateProblemSheet('0',problemDoc,0);
-  problemId = problemRes.getContentText().replace(/["\\]/g, '');
-  Logger.log(problemRes.getResponseCode());
-  Logger.log(problemRes.getContentText());
 
-  const checkDupOpt = {
-    method : 'post',
-    payload : JSON.stringify({ header : "Person" ,query :{ _id: userId} })
-  }
-  const checkDup = UrlFetchApp.fetch(Endpoint+"/find", checkDupOpt);
-  const userDup = JSON.parse(checkDup.getContentText()).length ;
-  if (userDup > 0) {
-    updateDupPerson(userId,pid);
-  } else {
-    const personDoc = {}
-    personDoc._id = userId
-    personDoc.role = "User"
-    personDoc.name = displayName
-    personDoc.tel = "-"
-    personDoc.profilePicture = pictureUrl
-    personDoc.problems = [[pid,"User"]]
-    const personOpt = {
-      header : 'Person',
-      'contentType': 'application/json',
-      method: 'post',
-      payload : JSON.stringify({ header : 'Person' , query : personDoc})
-    };
+  const uppersonOpt = {
+    method: 'post',
+    payload : JSON.stringify({ header : "Person" , filter : {_id : userId} , query : { problems : [pid,"User"]} })
+  };
+  const uppersonRes = UrlFetchApp.fetch(Endpoint+"/updatePush", uppersonOpt);
+  const matchedCount = JSON.parse(uppersonRes.getContentText()).matchedCount;
+  if (matchedCount == 0) {
+    const personDoc = { _id:userId , role:"User" , name:displayName , tel:"-" , profilePicture:pictureUrl , problems:[[pid,"User"]]}
+    const personOpt = {method:'post' , payload:JSON.stringify({header:'Person' , query:personDoc})}
     const personRes = UrlFetchApp.fetch(Endpoint+"/insert", personOpt);
     updatePersonSheet('0',personDoc,0);
-    Logger.log(personRes.getResponseCode());
-    Logger.log(personRes.getContentText());
   }
   return pid;
 }
 
-//function that increase problems of client incase of 1 client report many problems
-function updateDupPerson(userId,problemId) {
-  const uppersonOpt = {
-    method: 'post',
-    payload : JSON.stringify({ header : "Person" , filter : {_id : userId} , query : { problems : [problemId,"User"]} })
-  };
-    const uppersonRes = UrlFetchApp.fetch(Endpoint+"/updatePush", uppersonOpt);
-    Logger.log(uppersonRes.getResponseCode());
-    Logger.log(uppersonRes.getContentText());
-  
-}
-
+//hash Md5
 function generateShortMd5Hash() {
   var inputString = Utilities.getUuid(); // Generate a UUID
   var md5hash = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, inputString, Utilities.Charset.UTF_8);
