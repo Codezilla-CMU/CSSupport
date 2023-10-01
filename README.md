@@ -103,9 +103,9 @@ drive-to-web Link: [https://api.drv.tw/~reidcout.004@gmail.com/gd/?a=admin#authe
 
 # Set-Up MongoDB
 
-# Getting Started with MongoDB HTTP Endpoint
+## Getting Started with MongoDB HTTP Endpoint ##
 
-## Prerequisites
+## Prerequisites ##
 
 Before you begin, make sure you have the following prerequisites in place:
 
@@ -115,13 +115,13 @@ Before you begin, make sure you have the following prerequisites in place:
 
 3. **Database & Collection**: Set up a database name and collection within your MongoDB cluster to store your data.
 
-## Step 1: Access the MongoDB Atlas Dashboard
+## Step 1: Access the MongoDB Atlas Dashboard ##
 
 1. Log in to your MongoDB Atlas account.
 
 2. In the Atlas dashboard, select the project and cluster where you want to enable the HTTP endpoint.
 
-## Step 2: Enable the HTTP Endpoint
+## Step 2: Enable the HTTP Endpoint ##
 
 1. In the cluster view, click on "Database Access" in the left sidebar.
 
@@ -131,7 +131,7 @@ Before you begin, make sure you have the following prerequisites in place:
 
 4. Once the IP is added, go back to the cluster view and click on "Database Access" again. Edit the user you created earlier and assign the appropriate role, such as "Atlas Admin" or "Read and Write to Any Database."
 
-## Step 3: Configure the HTTP Endpoint
+## Step 3: Configure the HTTP Endpoint ##
 
 1. In the cluster view, click on "Connect" at the top of the screen.
 
@@ -148,7 +148,7 @@ Before you begin, make sure you have the following prerequisites in place:
 
 6. Click "Connect" to establish a connection to your MongoDB cluster.
 
-## Step 4: Access Data via HTTP
+## Step 4: Access Data via HTTP ##
 
 1. Once you have connected to your MongoDB cluster using MongoDB Compass, you can access your data via the HTTP endpoint.
    
@@ -160,7 +160,7 @@ Before you begin, make sure you have the following prerequisites in place:
    
 5. In each function setting have to set Authentication to System.
 
-  - /sheet2mongo/insert
+  route /sheet2mongo/insert
     
     ```bash
       exports = function(payload) {
@@ -171,7 +171,7 @@ Before you begin, make sure you have the following prerequisites in place:
   
       return collection.insertOne(query);}
     ```
-  - /sheet2mongo/insertDate
+  route /sheet2mongo/insertDate
 
     ```bash
       exports = function(payload) {
@@ -183,7 +183,7 @@ Before you begin, make sure you have the following prerequisites in place:
     
       return collection.insertOne(query);}
     ```
-  - /sheet2mongo/find
+  route /sheet2mongo/find
 
     ```bash
       exports = function(payload) {
@@ -194,7 +194,7 @@ Before you begin, make sure you have the following prerequisites in place:
     
       return collection.find(query).toArray();}
     ```
-  - /sheet2mongo/findDate
+  route /sheet2mongo/findDate
 
     ```bash
       exports = function(payload) {
@@ -210,7 +210,7 @@ Before you begin, make sure you have the following prerequisites in place:
         ]
       }).toArray();}
     ```
-  - /sheet2mongo/updateSet
+  route /sheet2mongo/updateSet
 
     ```bash
       exports = function(payload) {
@@ -222,7 +222,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$set:query}); }
     ```
-  - /sheet2mongo/updatePush
+  route /sheet2mongo/updatePush
 
     ```bash
       exports = function(payload) {
@@ -234,7 +234,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$push:query});}
     ```
-  - /sheet2mongo/updatePull
+  route /sheet2mongo/updatePull
 
     ```bash
       exports = function(payload) {
@@ -246,7 +246,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$pull:query});}
     ```
-  - /sheet2mongo/updateDate
+  route /sheet2mongo/updateDate
 
     ```bash
       exports = function(payload) {
@@ -259,7 +259,7 @@ Before you begin, make sure you have the following prerequisites in place:
       
       return collection.updateOne(filter,{$set:query});}
     ```
-  - /sheet2mongo/remove
+  route /sheet2mongo/remove
 
     ```bash
       exports = function(payload) {
